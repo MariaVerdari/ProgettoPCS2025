@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "test_sorting_algorithm.hpp"
+#include "test.hpp"
 
 int main(int argc, char *argv[])
 {

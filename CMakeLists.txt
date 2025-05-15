@@ -74,5 +74,5 @@ add_executable(${PROJECT_NAME}_TEST
     ${ProgettoPCS2025_TEST_HEADERS})
 
 target_link_libraries(${PROJECT_NAME}_TEST ${ProgettoPCS2025_LINKED_LIBRARIES})
-target_include_directories(${PROJECT_NAME}_TEST PRIVATE ${Sorting1_INCLUDE} ${ProgettoPCS2025_TEST_INCLUDE})
+target_include_directories(${PROJECT_NAME}_TEST PRIVATE ${ProgettoPCS2025_INCLUDE} ${ProgettoPCS2025_TEST_INCLUDE})
 target_compile_options(${PROJECT_NAME}_TEST PUBLIC -fPIC)

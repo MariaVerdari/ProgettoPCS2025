@@ -18,34 +18,19 @@ void Normalizzazione(auto& arr) {
 }
 
 namespace PolygonalLibrary
-{
-
-	
-	
+{	
 bool Tetraedro(PolygonalMesh& mesh){   // passaggio per riferimento per modificare la mesh
 
-	mesh.NumCell3Ds +=1;
-	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
-	mesh.Cell3DsNumFaces.push_back(4);
-	vector<int> facce;
-	mesh.Cell3DsFaces.push_back(facce);
-	
-	for (unisgned int i = 0; i< 4; i++) {
-		mesh.NumCell2Ds +=1;
-		mesh.Cell2DsId.push_back(mesh.NumCell2Ds);
-		(mesh.Cell3DsFaces(mesh.NumCell3Ds)).push_back(mesh.NumCell2Ds);
-		for (unisgned int j = 0; i< 3; i++) {
-			
-		}
+	vector <int> vertices;
+	vector <int> edges;
+	vector <int> faces;
 
-		
-	}
-	
 	// Celle 0Ds
 	int exNumCell0Ds = NumCell0Ds;
 
 	for (unsigned int i = 0; i < 4; i++) {
 		mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
+		vertices.push_back(mesh.NumCell0Ds);
 		mesh.NumCell0Ds++;
 	}
 	mesh.Cell0DsCoordinates.conservativeresize(mesh.NumCell0Ds,3);
@@ -81,16 +66,16 @@ bool Tetraedro(PolygonalMesh& mesh){   // passaggio per riferimento per modifica
 	Normalizzazione(p3);
 	Normalizzazione(p4);
 
-	for (unsigned i = 0; i<3;i++){
+	for (unsigned int i = 0; i<3;i++){
 		mesh.Cell0DsCoordinates[ exNumCell0Ds, i] = p1[i];
 	}
-	for (unsigned i = 0; i<3;i++){
+	for (unsigned int i = 0; i<3;i++){
 		mesh.Cell0DsCoordinates[ exNumCell0Ds +1, i] = p2[i];
 	}
-	for (unsigned i = 0; i<3;i++){
+	for (unsigned int i = 0; i<3;i++){
 		mesh.Cell0DsCoordinates[ exNumCell0Ds +2, i] = p3[i];
 	}
-	for (unsigned i = 0; i<3;i++){
+	for (unsigned int i = 0; i<3;i++){
 		mesh.Cell0DsCoordinates[exNumCell0Ds +3, i] = p4[i];
 	}
 	
@@ -100,6 +85,7 @@ bool Tetraedro(PolygonalMesh& mesh){   // passaggio per riferimento per modifica
 
 	for (unsigned int i = 0; i < 6; i++) {
 		mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+		edges.push_back(mesh.NumCell1Ds);
 		mesh.NumCell1Ds++;
 	}
 	
@@ -113,14 +99,43 @@ bool Tetraedro(PolygonalMesh& mesh){   // passaggio per riferimento per modifica
 	}
 	assert(k == 6);
 	
+	// Celle 2Ds
 	
+	for (unsigned int i = 0; i < 4; i++) {
+		mesh.Cell2DsId.push_back(mesh.NumCell2Ds);
+		edges.push_back(mesh.NumCell2Ds);
+		mesh.Cell2DsNumVert.push_back(3);
+		mesh.Cell2DsNumEdg.push_back(3);
+		mesh.NumCell2Ds++;
+	}
 	
+	vector <int> faccia0vert = [0, 1, 3];
+	vector <int> faccia0edg = [0, 4, 2];
+	mesh.Cell2DsVertices.push_back(faccia0vert);
+	mesh.Cell2DsEdges.push_back(faccia0edg);
+	vector <int> faccia1vert = [0, 1, 2];
+	vector <int> faccia1edg = [0, 3, 1];
+	mesh.Cell2DsVertices.push_back(faccia1vert);
+	mesh.Cell2DsEdges.push_back(faccia1edg);
+	vector <int> faccia2vert = [1, 2, 3];
+	vector <int> faccia2edg = [3, 5, 4];
+	mesh.Cell2DsVertices.push_back(faccia2vert);
+	mesh.Cell2DsEdges.push_back(faccia2edg);
+	vector <int> faccia3vert = [2, 0, 3];
+	vector <int> faccia3edg = [1, 2, 5];
+	mesh.Cell2DsVertices.push_back(faccia3vert);
+	mesh.Cell2DsEdges.push_back(faccia3edg);
 	
+	// Celle 3Ds
 	
-	
-
-
-	
+	mesh.NumCell3Ds +=1;
+	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
+	mesh.Cell3DsNumFaces.push_back(4);
+	mesh.Cell3DsNumEdg.push_back(6);
+	mesh.Cell3DsNumVert.push_back(4);
+	mesh.Cell3DsVertices.push_back(vertices);
+	mesh.Cell3DsEdges.push_back(edges);
+	mesh.Cell3DsFaces.push_back(faces);	
 
 	return true;
 }

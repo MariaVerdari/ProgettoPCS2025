@@ -140,6 +140,9 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 
 	return true;
 }
+
+
+
 	bool Ottaedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
 
 	vector <int> vertices;

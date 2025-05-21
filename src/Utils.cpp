@@ -17,34 +17,34 @@ void Normalizzazione(auto& arr) {
 	
 }
 
-namespace PolygonalLibrary
+namespace PolyhedronLibrary
 {	
-bool Tetraedro(PolygonalMesh& mesh){   // passaggio per riferimento per modificare la mesh
+bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
 
 	vector <int> vertices;
 	vector <int> edges;
 	vector <int> faces;
 
 	// Celle 0Ds
-	int exNumCell0Ds = NumCell0Ds;
+	int exNumCell0Ds = mesh.NumCell0Ds;
 
 	for (unsigned int i = 0; i < 4; i++) {
 		mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
 		vertices.push_back(mesh.NumCell0Ds);
 		mesh.NumCell0Ds++;
 	}
-	mesh.Cell0DsCoordinates.conservativeresize(mesh.NumCell0Ds,3);
+	mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
 	
-	double p1[3] = [0,0,0];
-	double p2[3] = [1,0,0];
+	double p1[3] = {0,0,0};
+	double p2[3] = {1,0,0};
 	double h1 = sqrt(1-0.5*0.5);
-	double p3[3] = [0.5,h1,0];
+	double p3[3] = {0.5,h1,0};
 	double a = (0+1+0.5)/3.0;
 	double b = (0+0+h1)/3.0;
 	double dist = sqrt(a*a + b*b);
 	double h2 = sqrt(1-dist*dist);
-	double p4[3] = [a,b,h2];
-	double baricentro[3] = [a, b, h2/4.0];
+	double p4[3] = {a,b,h2};
+	double baricentro[3] = {a, b, h2/4.0};
 	
 	p1[0] -= baricentro[0] ;
 	p2[0] -= baricentro[0] ;
@@ -67,21 +67,21 @@ bool Tetraedro(PolygonalMesh& mesh){   // passaggio per riferimento per modifica
 	Normalizzazione(p4);
 
 	for (unsigned int i = 0; i<3;i++){
-		mesh.Cell0DsCoordinates[ exNumCell0Ds, i] = p1[i];
+		mesh.Cell0DsCoordinates(exNumCell0Ds, i) = p1[i];
 	}
 	for (unsigned int i = 0; i<3;i++){
-		mesh.Cell0DsCoordinates[ exNumCell0Ds +1, i] = p2[i];
+		mesh.Cell0DsCoordinates(exNumCell0Ds +1, i) = p2[i];
 	}
 	for (unsigned int i = 0; i<3;i++){
-		mesh.Cell0DsCoordinates[ exNumCell0Ds +2, i] = p3[i];
+		mesh.Cell0DsCoordinates(exNumCell0Ds +2, i) = p3[i];
 	}
 	for (unsigned int i = 0; i<3;i++){
-		mesh.Cell0DsCoordinates[exNumCell0Ds +3, i] = p4[i];
+		mesh.Cell0DsCoordinates(exNumCell0Ds +3, i) = p4[i];
 	}
 	
 	// Celle 1Ds
 	
-	int exNumCell1Ds = NumCell1Ds;
+	int exNumCell1Ds = mesh.NumCell1Ds;
 
 	for (unsigned int i = 0; i < 6; i++) {
 		mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -89,13 +89,14 @@ bool Tetraedro(PolygonalMesh& mesh){   // passaggio per riferimento per modifica
 		mesh.NumCell1Ds++;
 	}
 	
-	mesh.Cell1DsExtrema.conservativeresize(mesh.NumCell1Ds,2);
+	mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
 	unsigned int k = 0;
 	for (unsigned int i = 0; i <4; i++) {
-		for (unsigned int j = i+1 ; j <4; j++)
-		mesh.Cell1DsExtrema[exNumCell1Ds+k, 0] = mesh.Cell0DsId[exNumCell0Ds+i];
-		mesh.Cell1DsExtrema[exNumCell1Ds+k, 1] = mesh.Cell0DsId[exNumCell0Ds+j];
-		k++;
+		for (unsigned int j = i+1 ; j <4; j++){
+			mesh.Cell1DsExtrema(exNumCell1Ds+k, 0) = mesh.Cell0DsId[exNumCell0Ds+i];
+			mesh.Cell1DsExtrema(exNumCell1Ds+k, 1) = mesh.Cell0DsId[exNumCell0Ds+j];
+			k++;
+		}
 	}
 	assert(k == 6);
 	
@@ -109,20 +110,20 @@ bool Tetraedro(PolygonalMesh& mesh){   // passaggio per riferimento per modifica
 		mesh.NumCell2Ds++;
 	}
 	
-	vector <int> faccia0vert = [0, 1, 3];
-	vector <int> faccia0edg = [0, 4, 2];
+	vector <int> faccia0vert = {0, 1, 3};
+	vector <int> faccia0edg = {0, 4, 2};
 	mesh.Cell2DsVertices.push_back(faccia0vert);
 	mesh.Cell2DsEdges.push_back(faccia0edg);
-	vector <int> faccia1vert = [0, 1, 2];
-	vector <int> faccia1edg = [0, 3, 1];
+	vector <int> faccia1vert = {0, 1, 2};
+	vector <int> faccia1edg = {0, 3, 1};
 	mesh.Cell2DsVertices.push_back(faccia1vert);
 	mesh.Cell2DsEdges.push_back(faccia1edg);
-	vector <int> faccia2vert = [1, 2, 3];
-	vector <int> faccia2edg = [3, 5, 4];
+	vector <int> faccia2vert = {1, 2, 3};
+	vector <int> faccia2edg = {3, 5, 4};
 	mesh.Cell2DsVertices.push_back(faccia2vert);
 	mesh.Cell2DsEdges.push_back(faccia2edg);
-	vector <int> faccia3vert = [2, 0, 3];
-	vector <int> faccia3edg = [1, 2, 5];
+	vector <int> faccia3vert = {2, 0, 3};
+	vector <int> faccia3edg = {1, 2, 5};
 	mesh.Cell2DsVertices.push_back(faccia3vert);
 	mesh.Cell2DsEdges.push_back(faccia3edg);
 	

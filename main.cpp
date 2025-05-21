@@ -5,9 +5,9 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace PolygonalLibrary;
+using namespace PolyhedronLibrary;
 
-int main [
+int main() {
     PolyhedronMesh mesh;
     if (!Tetraedro(mesh))
     {
@@ -15,7 +15,13 @@ int main [
         return 1;
     }
 
+for (unsigned int i=0; i<mesh.NumCell0Ds; i++){
+	for (unsigned int j=0; j<3; j++) {
+		cout<< mesh.Cell0DsCoordinates(i,j)<<" ";
+	}
+	cout<<endl;
+}
 return 0;
 
 
-]
+}

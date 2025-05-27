@@ -311,7 +311,7 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 
 	for (unsigned int i=0; i<12;i++){
 		for (unsigned int j=0;j<3;j++){
-			mesh.Cell0DsCoordinates(exNumCell0Ds+i,j)=A(i,j)/norma
+			mesh.Cell0DsCoordinates(exNumCell0Ds+i,j)=A(i,j)/norma;
 		}
 	}
 
@@ -327,43 +327,60 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 	}
 	
 	mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
-	Matrix<double,30,2>B;
-	B<< 0, 1,
-    0, 4,
-    0, 5,
-    0, 8,
-    0, 9,
-    1, 6,
-    1, 7,
-    1, 8,
-    1, 9,
-    2, 3,
-    2, 4,
-    2, 5,
-    2,10,
-    2,11,
-    3, 6,
-    3, 7,
-    3,10,
-    3,11,
-    4, 5,
-    4,10,
-    5,11,
-    6, 7,
-    6, 8,
-    6,10,
-    7, 9,
-    7,11,
-    8, 9,
-    8,10,
-    9,11,
-   10,11;
-	
+	Eigen::MatrixXi B(30, 2);
+B << 
+  0, 1,
+  0, 4,
+  0, 5,
+  0, 8,
+  0, 9,
+  1, 6,
+  1, 7,
+  1, 8,
+  1, 9,
+  2, 3,
+  2, 4,
+  2, 5,
+  2,10,
+  2,11,
+  3, 6,
+  3, 7,
+  3,10,
+  3,11,
+  4, 5,
+  4, 8,
+  4,10,
+  5, 9,
+  5,11,
+  6, 7,
+  6, 8,
+  6,10,
+  7, 9,
+  7,11,
+  8,10,
+  9,11;
+
+
+ /*	check lunghezze
 	for (unsigned int i=0;i<30;i++){
 		for (unsigned int j=0;j<2;j++){
 			mesh.Cell1DsExtrema(exNumCell1Ds+i,j)=B(i,j);
 		}
+		int b1= B(i,0);
+		int b2 = B(i,1);
+		double q=mesh.Cell0DsCoordinates(b1,0);
+				double r=mesh.Cell0DsCoordinates(b2,0);
+		double s=mesh.Cell0DsCoordinates(b1,1);
+		double t=mesh.Cell0DsCoordinates(b2,1);
+		double u=mesh.Cell0DsCoordinates(b1,2);
+		double v=mesh.Cell0DsCoordinates(b2,2);
+
+		
+		cout<<i<<" "<<(q- r)*(q-r)+(s- t)*(s-t)+(u-v)*(u-v)	<<endl	;
+	
 	}
+	
+	*/
 
 	// Celle 2Ds
 	
@@ -375,7 +392,9 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 		mesh.NumCell2Ds++;
 	}
 	
-	Matrix<int,20,3>C;
+	
+	//CONTROLLARE
+	Matrix<int,20,3>C; //vertici
 	C<<0, 1, 8,
     0, 4, 5,
     0, 5, 9,
@@ -397,7 +416,7 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
     6, 8,10,
     7, 9,11;
 
-	Matrix<int,20,3>D;
+	Matrix<int,20,3>D; //lati
 	D<<0,  7,  3,   
 	1,  2, 18,   
 	2,  4, 28,  
@@ -424,13 +443,13 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 		vector<int> facciavert;
 		for (unsigned int j=0;j<3;j++){
 			facciaedge.push_back(D(i,j));
-			facciavert.push_back(D(i,j));
+			facciavert.push_back(C(i,j));
 		}
 		mesh.Cell2DsVertices.push_back(facciavert);
 		mesh.Cell2DsEdges.push_back(facciaedge);
 	}
 
-	
+	//CONTROLLARE
 	// Celle 3Ds
 	
 	mesh.NumCell3Ds +=1;

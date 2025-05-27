@@ -9,7 +9,7 @@ using namespace PolyhedronLibrary;
 
 int main() {
     PolyhedronMesh mesh;
-    if (!Tetraedro(mesh))
+    if (!Icosaedro(mesh))
     {
         cerr << "errore"<< endl;
         return 1;

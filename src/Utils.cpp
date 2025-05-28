@@ -273,6 +273,196 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 
 	return true;
 	}
+
+
+
+	bool Icosaedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
+
+	vector <int> vertices;
+	vector <int> edges;
+	vector <int> faces;
+
+	// Celle 0Ds
+	int exNumCell0Ds = mesh.NumCell0Ds;
+
+	for (unsigned int i = 0; i < 12; i++) {
+		mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
+		vertices.push_back(mesh.NumCell0Ds);
+		mesh.NumCell0Ds++;
+	}
+	mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
+	
+	double phi=(1+sqrt(5.0))/2.0;
+	Matrix<double,12,3>A;
+	A<<0,1,phi,
+	0,-1,phi,
+	0,1,-phi,
+	0,-1,-phi,
+	1,phi,0,
+	-1,phi,0,
+	1,-phi,0,
+	-1,-phi,0,
+	phi,0,1,
+	-phi,0,1,
+	phi,0,-1,
+	-phi,0,-1;
+
+	double norma=sqrt(1.0+phi*phi);
+
+	for (unsigned int i=0; i<12;i++){
+		for (unsigned int j=0;j<3;j++){
+			mesh.Cell0DsCoordinates(exNumCell0Ds+i,j)=A(i,j)/norma;
+		}
+	}
+
+	
+	// Celle 1Ds
+	
+	int exNumCell1Ds = mesh.NumCell1Ds;
+
+	for (unsigned int i = 0; i < 30; i++) {
+		mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+		edges.push_back(mesh.NumCell1Ds);
+		mesh.NumCell1Ds++;
+	}
+	
+	mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+	Eigen::MatrixXi B(30, 2);
+B << 
+  0, 1,
+  0, 4,
+  0, 5,
+  0, 8,
+  0, 9,
+  1, 6,
+  1, 7,
+  1, 8,
+  1, 9,
+  2, 3,
+  2, 4,
+  2, 5,
+  2,10,
+  2,11,
+  3, 6,
+  3, 7,
+  3,10,
+  3,11,
+  4, 5,
+  4, 8,
+  4,10,
+  5, 9,
+  5,11,
+  6, 7,
+  6, 8,
+  6,10,
+  7, 9,
+  7,11,
+  8,10,
+  9,11;
+
+
+ /*	check lunghezze
+	for (unsigned int i=0;i<30;i++){
+		for (unsigned int j=0;j<2;j++){
+			mesh.Cell1DsExtrema(exNumCell1Ds+i,j)=B(i,j);
+		}
+		int b1= B(i,0);
+		int b2 = B(i,1);
+		double q=mesh.Cell0DsCoordinates(b1,0);
+				double r=mesh.Cell0DsCoordinates(b2,0);
+		double s=mesh.Cell0DsCoordinates(b1,1);
+		double t=mesh.Cell0DsCoordinates(b2,1);
+		double u=mesh.Cell0DsCoordinates(b1,2);
+		double v=mesh.Cell0DsCoordinates(b2,2);
+
+		
+		cout<<i<<" "<<(q- r)*(q-r)+(s- t)*(s-t)+(u-v)*(u-v)	<<endl	;
+	
+	}
+	
+	*/
+
+	// Celle 2Ds
+	
+	for (unsigned int i = 0; i < 20; i++) {
+		mesh.Cell2DsId.push_back(mesh.NumCell2Ds);
+		faces.push_back(mesh.NumCell2Ds);
+		mesh.Cell2DsNumVert.push_back(3);
+		mesh.Cell2DsNumEdg.push_back(3);
+		mesh.NumCell2Ds++;
+	}
+	
+	
+	//CONTROLLARE
+	Matrix<int,20,3>C; //vertici
+	C<<0, 1, 8,
+    0, 4, 5,
+    0, 5, 9,
+    0, 8, 4,
+    0, 9, 1,
+    1, 6, 8,
+    1, 7, 6,
+    1, 9, 7,
+    2, 3,10,
+    2, 4, 5,
+    2, 5,11,
+    2,10, 4,
+    2,11, 3,
+    3, 6, 7,
+    3,10, 6,
+    3,11, 7,
+    4, 8,10,
+    5, 9,11,
+    6, 8,10,
+    7, 9,11;
+
+	Matrix<int,20,3>D; //lati
+	D<<0,  7,  3,   
+	1,  2, 18,   
+	2,  4, 28,  
+	1,  3, 16,   
+	0,  4,  8,   
+	5,  7, 22,   
+	5,  6, 21,   
+	6,  8, 24,   
+	9, 12, 16,   
+	10, 11, 18,   
+	11, 13, 20,   
+	10, 12, 19,  
+	13,  9, 17,   
+	14, 15, 21,   
+	14, 16, 23,   
+	15, 17, 25,  
+	3, 19, 27,   
+	2,  4, 28,   
+	22, 23, 27,   
+	24, 25, 28;   
+	
+	for (unsigned int i=0;i<20;i++){
+		vector<int> facciaedge;
+		vector<int> facciavert;
+		for (unsigned int j=0;j<3;j++){
+			facciaedge.push_back(D(i,j));
+			facciavert.push_back(C(i,j));
+		}
+		mesh.Cell2DsVertices.push_back(facciavert);
+		mesh.Cell2DsEdges.push_back(facciaedge);
+	}
+
+	//CONTROLLARE
+	// Celle 3Ds
+	
+	mesh.NumCell3Ds +=1;
+	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
+	mesh.Cell3DsNumFaces.push_back(20);
+	mesh.Cell3DsNumEdg.push_back(30);
+	mesh.Cell3DsNumVert.push_back(12);
+	mesh.Cell3DsVertices.push_back(vertices);
+	mesh.Cell3DsEdges.push_back(edges);
+	mesh.Cell3DsFaces.push_back(faces);	
+
+	return true;
+}
 	
 	
 	

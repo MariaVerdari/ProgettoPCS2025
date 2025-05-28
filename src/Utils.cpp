@@ -6,6 +6,7 @@
 #include "Eigen/Eigen"
 #include <cmath>
 #include <cassert>
+#include <limits>
 
 using namespace std;
 using namespace Eigen;
@@ -19,6 +20,24 @@ void Normalizzazione(auto& arr) {
 
 namespace PolyhedronLibrary
 {	
+int Duplicato(PolyhedronMesh& mesh, auto& arr){
+	double eps = std::numeric_limits<double>::epsilon();
+	int a = -1;
+
+	for (unsigned int i =0; i<NumCell0Ds; i++){
+		if ((arr[0] - mesh.Cell0DsCoordinates(i,0)) < eps){
+			if ((arr[1] - mesh.Cell0DsCoordinates(i,1)) < eps){
+				if ((arr[2] - mesh.Cell0DsCoordinates(i,2)) < eps){
+					int a = Cell0DsId[i];				
+			}
+		}	
+	}
+	
+}
+return a;
+}
+
+
 bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
 
 	vector <int> vertices;
@@ -464,6 +483,97 @@ B <<
 	return true;
 }
 	
+	
+	
+bool Triangolazione(PolyhedronMesh& mesh, int b){ 
+	
+mesh.Cell2DsId.push_back(mesh.NumCell3Ds);
+mesh.NumCell3Ds ++;
+
+map<vector<int>, int> latiEsistenti;
+
+
+
+	
+int exNumCell0Ds = mesh.NumCell0Ds;
+vector<int> facce = mesh.Cell3DsFaces[0];
+for (unsigned int numerofaccia=0; numerofaccia<mesh.Cell3DsNumFaces[0],; i++) {// ciclo su ogni faccia
+int faccia = facce[numerofaccia];
+vector<int> latifaccia = mesh.Cell2DsEdges[faccia];
+vector<int> verticifaccia= mesh.Cell2DsVertices[faccia];
+Eigen::MatrixXd coordpunti;
+for (unsigned int punto = 0; punto<3,; j++) {
+	for (unsigned int coordinata = 0; coordinata < 3; coordinata ++) {
+		coordpunti(punto, coordinata) = mesh.Cell0DsCoordinates(verticifaccia[punto], coordinata);
+		}
+}
+vector<vector<int>> griglia;
+griglia.reserve(b+1);
+
+for (unsigned int i = 0; i<=b; i++) {
+	vector<int> rigaGriglia;
+	rigaGriglia.reserve(b-i+1);
+	for (unsigned int j=0; j<=b-i; j++) {
+		unsigned int k = b-i-j;
+		double nuovax = (i*coordpunti[1,1]+j*coordpunti[2,1]+k*coordpunti[3,1])/b;
+		double nuovay = (i*coordpunti[1,2]+j*coordpunti[2,2]+k*coordpunti[3,2])/b;
+		double nuovaz = (i*coordpunti[1,3]+j*coordpunti[2,3]+k*coordpunti[3,3])/b;
+		int nuovopunto[3] = {nuovax, nuovay, nuovaz};
+		Normalizzazione(nuovopunto);
+		
+		int a = Duplicato(mesh,nuovopunto);
+		if (a == -1) {
+			a = mesh.NumCell0Ds;		
+			mesh.Cell0DsId.push_back(a);
+			mesh.NumCell0Ds++;
+			mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
+			for (unsigned int j=0;j<3;j++)
+			mesh.Cell0DsCoordinates(NumCell0Ds-1,j)=nuovopunto[j];
+		
+	}
+	rigaGriglia.push_back(a);
+	
+		}
+		griglia.push_back(rigaGriglia);
+		
+		
+}// fine cilco dei vertici
+
+for (unsigned int i = 0; i <b; i++){
+	for (unsigned int j = 0; j < b-i; j++){
+		int a = griglia[i][j];
+		int b = griglia[i][j+1];
+		int c = griglia[i+1][j];
+		
+		if (a>b)
+			vector<int> v1 = {a,b};
+		else
+			vector<int> v1 = {b,a};
+		
+
+		auto result = latiEsistenti.insert({v1, mesh.NumCell1Ds});
+if (result.second) {
+	mesh.NumCell1Ds++;
+	
+} else {
+    std::cout << "Chiave già presente\n";
+}
+		
+		
+		
+	}
+}
+
+
+
+
+
+
+}// fine ciclo faccia
+}
+
+}
+	}
 	
 	
 	

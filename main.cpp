@@ -9,12 +9,20 @@ using namespace PolyhedronLibrary;
 
 int main() {
     PolyhedronMesh mesh;
-    if (!Icosaedro(mesh))
+    if (!Ottaedro(mesh))
     {
         cerr << "errore"<< endl;
         return 1;
     }
+	
+if (!Triangolazione(mesh, 4))
+	{
+        cerr << "errore triangolazione"<< endl;
+        return 1;
+    }
+	
 
+/*
 for (unsigned int i=0; i<mesh.NumCell0Ds; i++){
 	for (unsigned int j=0; j<3; j++) {
 		cout<< mesh.Cell0DsCoordinates(i,j)<<" ";
@@ -36,6 +44,7 @@ for (auto& el : mesh.Cell2DsVertices){
 	cout<<endl;
 }
 cout<<mesh.NumCell0Ds;
+*/
 
 
 /// Per visualizzare online le mesh:

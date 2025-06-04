@@ -9,6 +9,7 @@
 #include <limits>
 #include <map>
 #include <set>
+#include<iostream>
 
 using namespace std;
 using namespace Eigen;
@@ -17,7 +18,6 @@ void Normalizzazione(auto& arr) {
 	arr[0] = arr[0]/distanza;
 	arr[1] = arr[1]/distanza;
 	arr[2] = arr[2]/distanza;
-	
 }
 
 namespace PolyhedronLibrary
@@ -26,9 +26,9 @@ int Duplicato(PolyhedronMesh& mesh, auto& arr){
 	double eps = std::numeric_limits<double>::epsilon();
 	int a = -1;
 
-	for (unsigned int i =0; i<NumCell0Ds; i++) {
+	for (unsigned int i =0; i<mesh.NumCell0Ds; i++) {
 		if(fabs(arr[0] - mesh.Cell0DsCoordinates(i,0)) < eps && fabs(arr[1] - mesh.Cell0DsCoordinates(i,1)) < eps && fabs(arr[2] - mesh.Cell0DsCoordinates(i,2)) < eps){
-					a = Cell0DsId[i];				
+					a = mesh.Cell0DsId[i];				
 			}
 		}	
 	
@@ -64,6 +64,10 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 	double h2 = sqrt(1-dist*dist);
 	double p4[3] = {a,b,h2};
 	double baricentro[3] = {a, b, h2/4.0};
+	//double baricentro[3];
+	//for (unsigned int i =0; i<3;i++){
+	//baricentro[i]=(p1[i]+p2[i]+p3[i]+p4[i])/4.0;	}
+
 	
 	p1[0] -= baricentro[0] ;
 	p2[0] -= baricentro[0] ;
@@ -80,11 +84,47 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 	p3[2] -= baricentro[2] ;
 	p4[2] -= baricentro[2] ;
 	
-	Normalizzazione(p1);
+	   
+Normalizzazione(p1);
 	Normalizzazione(p2);
 	Normalizzazione(p3);
 	Normalizzazione(p4);
+	
 
+	
+	
+
+
+        cout<<"1-2"<<((p2[0] - p1[0]) * (p2[0] - p1[0]) +
+        (p2[1] - p1[1]) * (p2[1] - p1[1]) +
+        (p2[2] - p1[2]) * (p2[2] - p1[2]))<<endl;
+		
+		        cout<<"1-3"<<((p3[0] - p1[0]) * (p3[0] - p1[0]) +
+        (p3[1] - p1[1]) * (p3[1] - p1[1]) +
+        (p3[2] - p1[2]) * (p3[2] - p1[2]))<<endl;
+		
+		        cout<<"1-4"<<((p4[0] - p1[0]) * (p4[0] - p1[0]) +
+        (p4[1] - p1[1]) * (p4[1] - p1[1]) +
+        (p4[2] - p1[2]) * (p4[2] - p1[2]))<<endl;
+		
+		        cout<<"3-2"<<((p2[0] - p3[0]) * (p2[0] - p3[0]) +
+        (p2[1] - p3[1]) * (p2[1] - p3[1]) +
+        (p2[2] - p3[2]) * (p2[2] - p3[2]))<<endl;
+		
+		        cout<<"4-2"<<((p2[0] - p4[0]) * (p2[0] - p4[0]) +
+        (p2[1] - p4[1]) * (p2[1] - p4[1]) +
+        (p2[2] - p4[2]) * (p2[2] - p4[2]))<<endl;
+		
+		
+		        cout<<"4-2"<<((p3[0] - p4[0]) * (p3[0] - p4[0]) +
+        (p3[1] - p4[1]) * (p3[1] - p4[1]) +
+        (p3[2] - p4[2]) * (p3[2] - p4[2]))<<endl;
+		
+
+		
+	
+	
+	
 	for (unsigned int i = 0; i<3;i++){
 		mesh.Cell0DsCoordinates(exNumCell0Ds, i) = p1[i];
 	}
@@ -148,8 +188,8 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 	
 	// Celle 3Ds
 	
-	mesh.NumCell3Ds +=1;
 	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
+	mesh.NumCell3Ds +=1;
 	mesh.Cell3DsNumFaces.push_back(4);
 	mesh.Cell3DsNumEdg.push_back(6);
 	mesh.Cell3DsNumVert.push_back(4);
@@ -516,7 +556,7 @@ for (unsigned int numerofaccia=0; numerofaccia<mesh.Cell3DsNumFaces[0]; numerofa
 int faccia = facce[numerofaccia];
 vector<int> latifaccia = mesh.Cell2DsEdges[faccia];
 vector<int> verticifaccia= mesh.Cell2DsVertices[faccia];
-Eigen::MatrixXd coordpunti(3,3);
+MatrixXd coordpunti(3,3);
 for (unsigned int punto = 0; punto<3; punto++) {
 	for (unsigned int coordinata = 0; coordinata < 3; coordinata++) {
 		coordpunti(punto, coordinata) = mesh.Cell0DsCoordinates(verticifaccia[punto], coordinata);
@@ -530,9 +570,9 @@ for (unsigned int i = 0; i<=b; i++) {
 	rigaGriglia.reserve(b-i+1);
 	for (unsigned int j=0; j<=b-i; j++) {
 		unsigned int k = b-i-j;
-		double nuovax = (i*coordpunti(1,1)+j*coordpunti(2,1)+k*coordpunti(3,1))/b;
-		double nuovay = (i*coordpunti(1,2)+j*coordpunti(2,2)+k*coordpunti(3,2))/b;
-		double nuovaz = (i*coordpunti(1,3)+j*coordpunti(2,3)+k*coordpunti(3,3))/b;
+		double nuovax = (i*coordpunti(0,0)+j*coordpunti(1,0)+k*coordpunti(2,0))/b;
+		double nuovay = (i*coordpunti(0,1)+j*coordpunti(1,1)+k*coordpunti(2,1))/b;
+		double nuovaz = (i*coordpunti(0,2)+j*coordpunti(1,2)+k*coordpunti(2,2))/b;
 		double nuovopunto[3] = {nuovax, nuovay, nuovaz};
 		Normalizzazione(nuovopunto);
 		
@@ -559,6 +599,7 @@ vector <int> v2;
 vector <int> v3;
 vector <int> v4;
 vector <int> v5;
+
 for (unsigned int i = 0; i <b; i++){
 	for (unsigned int j = 0; j < b-i; j++){
 		int p1 = griglia[i][j];
@@ -590,7 +631,7 @@ for (unsigned int i = 0; i <b; i++){
 			v2 = {p3,p2};
 		
         int v2id;
-		auto result = latiEsistenti.insert({v2, mesh.NumCell1Ds});
+		result = latiEsistenti.insert({v2, mesh.NumCell1Ds});
         if (result.second) {
 			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
 			v2id = mesh.NumCell1Ds;
@@ -607,7 +648,7 @@ for (unsigned int i = 0; i <b; i++){
 		else
 			v3 = {p3,p1};
 		int v3id;
-		auto result = latiEsistenti.insert({v3, mesh.NumCell1Ds});
+		result = latiEsistenti.insert({v3, mesh.NumCell1Ds});
         if (result.second) {
 			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
 			v3id = mesh.NumCell1Ds;
@@ -626,7 +667,7 @@ for (unsigned int i = 0; i <b; i++){
 		mesh.Cell2DsNumEdg.push_back(3);
 		vector <int> abc = {p1,p2,p3};
 		mesh.Cell2DsVertices.push_back(abc);
-		vector <int> v123 = {v1id,v2id,v3id}
+		vector <int> v123 = {v1id,v2id,v3id};
 		mesh.Cell2DsEdges.push_back(v123);
 
 		if (j!=b-i-1){//antagonista
@@ -636,7 +677,7 @@ for (unsigned int i = 0; i <b; i++){
 		    else
 			    v4 = {p2,p4};
 			int v4id;
-		auto result = latiEsistenti.insert({v4, mesh.NumCell1Ds});
+		result = latiEsistenti.insert({v4, mesh.NumCell1Ds});
         if (result.second) {
 			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
 			v4id = mesh.NumCell1Ds;
@@ -655,7 +696,7 @@ for (unsigned int i = 0; i <b; i++){
 			    v5 = {p3,p4};
 
 			int v5id;
-		auto result = latiEsistenti.insert({v5, mesh.NumCell1Ds});
+		result = latiEsistenti.insert({v5, mesh.NumCell1Ds});
         if (result.second) {
 			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
 			v5id = mesh.NumCell1Ds;
@@ -673,7 +714,7 @@ for (unsigned int i = 0; i <b; i++){
 		mesh.Cell2DsNumEdg.push_back(3);
 		vector <int> bdc = {p2,p4,p3};
 		mesh.Cell2DsVertices.push_back(bdc);
-		vector <int> v452 = {v4id,v5id,v2id}
+		vector <int> v452 = {v4id,v5id,v2id};
 		mesh.Cell2DsEdges.push_back(v452);
 
 		}//chiude if antagonista
@@ -687,11 +728,11 @@ mesh.Cell3DsFaces.push_back(faccetr);
 mesh.Cell3DsNumFaces.push_back(faccetr.size());
 vector <int> latitr ;
 latitr.reserve(latiEsistenti.size());
-for (map <vector <int>>::iterator it=latiEsistenti.begin();it!=latiEsistenti.end();it++){
+for (map <vector<int>, int>::iterator it=latiEsistenti.begin();it!=latiEsistenti.end();it++){
 	latitr.push_back((*it).second);
 }
 mesh.Cell3DsEdges.push_back(latitr);
-mesh.Cell3DsNumEdg.push_back(latitr.size);
+mesh.Cell3DsNumEdg.push_back(latitr.size());
 vector <int> verticitriang;
 verticitriang.reserve(verticitr.size());
 for (int n:verticitr){

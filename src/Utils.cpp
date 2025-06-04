@@ -26,16 +26,14 @@ int Duplicato(PolyhedronMesh& mesh, auto& arr){
 	double eps = std::numeric_limits<double>::epsilon();
 	int a = -1;
 
-	for (unsigned int i =0; i<NumCell0Ds; i++){
-		if ((arr[0] - mesh.Cell0DsCoordinates(i,0)) < eps){
-			if ((arr[1] - mesh.Cell0DsCoordinates(i,1)) < eps){
-				if ((arr[2] - mesh.Cell0DsCoordinates(i,2)) < eps){
-					int a = Cell0DsId[i];				
+	for (unsigned int i =0; i<NumCell0Ds; i++) {
+		if(fabs(arr[0] - mesh.Cell0DsCoordinates(i,0)) < eps && fabs(arr[1] - mesh.Cell0DsCoordinates(i,1)) < eps && fabs(arr[2] - mesh.Cell0DsCoordinates(i,2)) < eps){
+					a = Cell0DsId[i];				
 			}
 		}	
-	}
 	
-}
+	
+
 return a;
 }
 

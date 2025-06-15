@@ -7,20 +7,240 @@ using namespace std;
 using namespace Eigen;
 using namespace PolyhedronLibrary;
 
-int main() {
-    PolyhedronMesh mesh;
-    if (!Ottaedro(mesh))
-    {
-        cerr << "errore"<< endl;
-        return 1;
-    }
+
 	
-if (!Triangolazione(mesh, 4))
-	{
-        cerr << "errore triangolazione"<< endl;
-        return 1;
-    }
+int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il programma: deve essere 5 o 7
+{	
+	PolyhedronMesh mesh;
+
+
+	if (argc ==5){ 
 	
+		int quadrupla[4];
+		for (unsigned int i = 0; i < argc-1; i++) { //mi assicuro che tutti gli interi siano validi
+			istringstream convert(argv[i+1]);
+			string altro;
+			if (!(convert >> quadrupla[i])  || !(convert.eof())) { //no numeri con il punto
+				cerr << "Errore: l'argomento '" << argv[i + 1] << "' non è un intero valido"<<endl;
+				return 1;
+			}
+		}
+		int p = quadrupla[0];
+		int q = quadrupla[1];
+		int b = quadrupla[2];
+		int c = quadrupla[3];
+
+		
+		
+		
+		if (b==c){ // seconda classe
+		cout<< "seconda classe b = c"<<endl;
+		
+			
+			if (p == 3){
+				
+				switch(q) {
+					case 3: //tetraedro
+						if (!Tetraedro(mesh))
+						{
+							cerr << "Errore nella formazione del tetraedro"<< endl;
+							return 1;
+						}
+						break;
+													
+						
+						
+	
+	
+	
+					case 4: //ottaedro
+						if (!Ottaedro(mesh))
+						{
+							cerr << "Errore nella formazione dell'ottaedro"<< endl;
+							return 1;
+						}
+						break;
+
+						
+	
+					
+
+					case 5: //icosaedro
+						if (!Icosaedro(mesh))
+						{
+							cerr << "Errore nella formazione dell'icosaedro"<< endl;
+							return 1;
+						}
+						break;
+					
+					default:
+					cerr << "Errore: l'argomento "<< q <<" non è valido: q può assumere solo i valori 3, 4 e 5"<<endl;
+					return 1;
+					
+				}
+			
+					// ALTRA TRIANGOLAZIONEEEE		
+
+				
+				
+			
+			} else if (q ==3) // duale
+			{
+				switch(p){
+					
+					case 4: //ottaedro
+					break;
+						
+	
+					
+
+					case 5: //icosaedro
+					break;
+					
+					default:
+					cerr << "Errore: l'argomento "<< p <<" non è valido: p può assumere solo i valori 3, 4 e 5"<<endl;
+					return 1;
+					
+				}
+			} else { //nessuno dei due casi
+			cerr << "Errore: nessuno degli argomenti p e q è pari a 3"<<endl;
+			return 1;
+				
+			}
+
+		
+			
+		}
+		else if (b == 0 || c == 0) { // prima classe
+		if (b == 0)
+			b = c;
+		
+			
+			if (p == 3){
+				
+				switch(q) {
+					case 3: //tetraedro
+						if (!Tetraedro(mesh))
+						{
+							cerr << "Errore nella formazione del tetraedro"<< endl;
+							return 1;
+						}
+						break;
+													
+						
+						
+	
+	
+	
+					case 4: //ottaedro
+						if (!Ottaedro(mesh))
+						{
+							cerr << "Errore nella formazione dell'ottaedro"<< endl;
+							return 1;
+						}
+						break;
+
+						
+	
+					
+
+					case 5: //icosaedro
+						if (!Icosaedro(mesh))
+						{
+							cerr << "Errore nella formazione dell'icosaedro"<< endl;
+							return 1;
+						}
+						break;
+					
+					default:
+					cerr << "Errore: l'argomento "<< q <<" non è valido: q può assumere solo i valori 3, 4 e 5"<<endl;
+					return 1;
+					
+				}
+				if (!Triangolazione(mesh, b)) //triangolazione
+							{
+								cerr << "Errore nella triangolazione"<< endl;
+								return 1;
+							}
+							
+
+				
+				
+			
+			} else if (q ==3) // duale
+			{
+				switch(p){
+					
+					case 4: //ottaedro
+					break;
+						
+	
+					
+
+					case 5: //icosaedro
+					break;
+					
+					default:
+					cerr << "Errore: l'argomento "<< p <<" non è valido: p può assumere solo i valori 3, 4 e 5"<<endl;
+					return 1;
+					
+				}
+			} else { //nessuno dei due casi
+			cerr << "Errore: nessuno degli argomenti p e q è pari a 3"<<endl;
+			return 1;
+				
+			}
+			
+		
+		
+		
+		}
+		else {// nessuno dei due casi
+			cerr << "Errore: gli argomenti "<< b <<" e "<< c<<", ovvero b e c, sono diversi tra loro e nessuno dei due è pari a 0"<<endl;
+			return 1;
+		}
+
+	
+		
+	}
+	
+	else if (argc == 7){ // cammino medio
+	
+	
+	
+		int sestupla[6];
+		for (unsigned int i = 0; i < argc -1; i++) { //mi assicuro che tutti gli interi siano validi
+			istringstream convert(argv[i+1]);
+			if (!(convert >> sestupla[i])  || !(convert.eof())) { 
+				cerr << "Errore: l'argomento '" << argv[i + 1] << "' non è un intero valido"<<endl;
+				return 1;
+			}
+		}
+		int p = sestupla[0];
+		int q = sestupla[1];
+		int b = sestupla[2];
+		int c = sestupla[3];
+		int v1 = sestupla[4];
+		int v2 = sestupla[5];
+		
+		
+	
+
+	
+	
+	}
+	
+	else{
+		cerr << "Errore: l'input può essere una quadrupla oppure una sestupla di numeri interi"<<endl;
+		return(1);
+	}
+		
+
+	
+	
+	
+	
+
 
 /*
 for (unsigned int i=0; i<mesh.NumCell0Ds; i++){

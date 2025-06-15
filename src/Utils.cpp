@@ -85,7 +85,7 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 	p4[2] -= baricentro[2] ;
 	
 	   
-Normalizzazione(p1);
+    Normalizzazione(p1);
 	Normalizzazione(p2);
 	Normalizzazione(p3);
 	Normalizzazione(p4);
@@ -94,7 +94,7 @@ Normalizzazione(p1);
 	
 	
 
-
+/*
         cout<<"1-2"<<((p2[0] - p1[0]) * (p2[0] - p1[0]) +
         (p2[1] - p1[1]) * (p2[1] - p1[1]) +
         (p2[2] - p1[2]) * (p2[2] - p1[2]))<<endl;
@@ -120,7 +120,7 @@ Normalizzazione(p1);
         (p3[1] - p4[1]) * (p3[1] - p4[1]) +
         (p3[2] - p4[2]) * (p3[2] - p4[2]))<<endl;
 		
-
+*/
 		
 	
 	
@@ -575,6 +575,7 @@ for (unsigned int i = 0; i<=b; i++) {
 		double nuovaz = (i*coordpunti(0,2)+j*coordpunti(1,2)+k*coordpunti(2,2))/b;
 		double nuovopunto[3] = {nuovax, nuovay, nuovaz};
 		Normalizzazione(nuovopunto);
+		//cout<<nuovopunto[0]*nuovopunto[0]+nuovopunto[1]*nuovopunto[1]+nuovopunto[2]*nuovopunto[2]<<endl;
 		
 		int a = Duplicato(mesh,nuovopunto);
 		if (a == -1) {

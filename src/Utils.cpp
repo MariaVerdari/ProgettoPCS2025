@@ -11,6 +11,7 @@
 #include <set>
 #include<iostream>
 #include <fstream>
+#include <algorithm>
 
 using namespace std;
 using namespace Eigen;
@@ -785,6 +786,55 @@ return true;
 
 }
 
+bool Duale (PolyhedronMesh& mesh){
+    list <unsigned int> facce1 = mesh.Cell2DsMarker[1];
+    map <int,int> bari;
+    unsigned int i=0;
+    for (unsigned int faccia : facce1){ //ciclo sulle facce per il baricentro
+        verticifaccia1 = mesh.Cell3DsVertices[faccia];
+        double nuovax = mesh.Cell0DsCoordinates(verticifaccia1[0],0)+mesh.Cell0DsCoordinates(verticifaccia1[1],0)+mesh.Cell0DsCoordinates(verticifaccia1[2],0);
+        double nuovay = mesh.Cell0DsCoordinates(verticifaccia1[0],1)+mesh.Cell0DsCoordinates(verticifaccia1[1],1)+mesh.Cell0DsCoordinates(verticifaccia1[2],1);
+        double nuovaz = mesh.Cell0DsCoordinates(verticifaccia1[0],2)+mesh.Cell0DsCoordinates(verticifaccia1[1],2)+mesh.Cell0DsCoordinates(verticifaccia1[2],2);
+        nuovax = nuovax/3.0;
+        nuovay = nuovay/3.0;
+        nuovaz = nuovaz/3.0;
+        double baricentro[3]={nuovax, nuovay, nuovaz};
+        Normalizzazione (baricentro);
+        mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
+        bari.insert({faccia,mesh.NumCell0Ds});
+        mesh.NumCell0Ds++;
+        mesh.Cell0DsVisibility.push_back(2);
+        mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
+            for (unsigned int j=0;j<3;j++)
+               mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=baricentro[j];
+        i++;
+    }
+
+    list <unsigned int> lati1 = mesh.Cell1DsMarker[1];
+    int latinuovi[lati1.size()] ;
+    unsigned int i=0;
+    for (unsigned int lato : lati1){ //ciclo sui lati per lati nuovi
+        vector<int> faccecondivise;
+        faccecondivise.reserve(2);
+        for (unsigned int j = 0; j< mesh.Cell2DsEdges.size(); j++){
+            if (find(mesh.Cell2DsEdges[j].begin(), mesh.Cell2DsEdges[j].end(), lato) !=mesh.Cell2DsEdges[j].end()){
+                faccecondivise.push_back(j);
+            }
+        }
+        p1 = bari [faccecondivise[0]];
+        p2 = bari [faccecondivise[1]];
+        mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+        latinuovi [i]=mesh.NumCell1Ds;
+        mesh.NumCell1Ds++;
+        mesh.Cell1DsVisibility.push_back(2);
+        mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+        mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=p1;
+        mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=p2;
+        i++;
+    }
+
+    return true;
+}
 
 
 	void writeCell0Ds(const PolyhedronMesh& mesh, const string& filename) {

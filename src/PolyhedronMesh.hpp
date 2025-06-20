@@ -20,13 +20,13 @@ struct PolyhedronMesh
 	
 	vector<int> Cell0DsId;
 	Eigen::MatrixXd Cell0DsCoordinates; //  x e y e z 
-	map<int, list<int>> Cell0DsMarker;
+	map<int, list<unsigned int>> Cell0DsMarker;
 
 	vector<int> Cell0DsVisibility; 
 	
 	vector<int> Cell1DsId;
 	Eigen::MatrixXi Cell1DsExtrema; // origin e end
-	map<int, list<int>> Cell1DsMarker;
+	map<int, list<unsigned int>> Cell1DsMarker;
 
 	vector<int> Cell1DsVisibility;
 
@@ -36,7 +36,7 @@ struct PolyhedronMesh
 	vector<int> Cell2DsNumEdg;
 	vector<vector<int>>	Cell2DsVertices;
 	vector<vector<int>>	Cell2DsEdges;
-	map<int, list<int>> Cell2DsMarker;
+	map<int, list< unsigned int>> Cell2DsMarker;
 
 	vector<int> Cell2DsVisibility;
 	
@@ -48,7 +48,7 @@ struct PolyhedronMesh
 	vector<vector<int>>	Cell3DsVertices;
 	vector<vector<int>>	Cell3DsEdges;
 	vector<vector<int>>	Cell3DsFaces;
-	map<int,list<int>> Cell3DsMarker;
+	map<int,list<unsigned int>> Cell3DsMarker;
 
 	vector<int> Cell3DsVisibility;
 

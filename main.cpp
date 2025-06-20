@@ -239,30 +239,30 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 		
 
 	
-	for ( unsigned int i=0; i < mesh.Cell0DsVisibility.size ; i++){
+	for ( unsigned int i=0; i < mesh.Cell0DsVisibility.size() ; i++){
 		list<unsigned int> lista = {i};
-		auto result = mesh.Cell0DsMarker.insert({mesh.Cell0DsVisibility[i],lista});
+		auto result = (mesh.Cell0DsMarker).insert({mesh.Cell0DsVisibility[i],lista});
 		if (!result.second){
 			((*(result.first)).second).push_back(i);
 		}
 	}
-	for ( unsigned int i=0; i < mesh.Cell1DsVisibility.size ; i++){
+	for ( unsigned int i=0; i < mesh.Cell1DsVisibility.size() ; i++){
 		list<unsigned int> lista = {i};
-		auto result = mesh.Cell1DsMarker.insert({mesh.Cell1DsVisibility[i],lista});
+		auto result = (mesh.Cell1DsMarker).insert({mesh.Cell1DsVisibility[i],lista});
 		if (!result.second){
 			((*(result.first)).second).push_back(i);
 		}
 	}
-	for ( unsigned int i=0; i < mesh.Cell2DsVisibility.size ; i++){
+	for ( unsigned int i=0; i < mesh.Cell2DsVisibility.size() ; i++){
 		list<unsigned int> lista = {i};
-		auto result = mesh.Cell2DsMarker.insert({mesh.Cell2DsVisibility[i],lista});
+		auto result = (mesh.Cell2DsMarker).insert({mesh.Cell2DsVisibility[i],lista});
 		if (!result.second){
 			((*(result.first)).second).push_back(i);
 		}
 	}
-	for ( unsigned int i=0; i < mesh.Cell3DsVisibility.size ; i++){
+	for ( unsigned int i=0; i < mesh.Cell3DsVisibility.size() ; i++){
 		list<unsigned int> lista = {i};
-		auto result = mesh.Cell3DsMarker.insert({mesh.Cell3DsVisibility[i],lista});
+		auto result = (mesh.Cell3DsMarker).insert({mesh.Cell3DsVisibility[i],lista});
 		if (!result.second){
 			((*(result.first)).second).push_back(i);
 		}

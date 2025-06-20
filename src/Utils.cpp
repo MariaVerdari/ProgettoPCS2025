@@ -793,7 +793,7 @@ return true;
     for (unsigned i = 0; i < mesh.NumCell0Ds; i++) {
         out
           << mesh.Cell0DsId[i] << ";"
-		  // marker << mesh.
+		  << mesh.Cell0DsVisibility[i] << ";"
           << mesh.Cell0DsCoordinates(i, 0) << ";"
           << mesh.Cell0DsCoordinates(i, 1) << ";"
           << mesh.Cell0DsCoordinates(i, 2) << endl;
@@ -806,7 +806,7 @@ return true;
     for (unsigned i = 0; i < mesh.NumCell1Ds; i++) {
         out
           << mesh.Cell1DsId[i] << ";"
-		  //marker
+		  << mesh.Cell1DsVisibility[i] << ";"
           << mesh.Cell1DsExtrema(i, 0) << ";"
           << mesh.Cell1DsExtrema(i, 1) << endl;
     }
@@ -818,7 +818,7 @@ return true;
     for (unsigned i = 0; i < mesh.NumCell2Ds; i++) {
         out
           << mesh.Cell2DsId[i] << ";"
-		//marker
+		  << mesh.Cell2DsVisibility[i] << ";"
           << mesh.Cell2DsNumVert[i] << ";";
         for (size_t j = 0; j < mesh.Cell2DsVertices[i].size(); j++) {
 			out << " " << mesh.Cell2DsVertices[i][j];
@@ -839,7 +839,7 @@ return true;
     for (unsigned i = 0; i < mesh.NumCell3Ds; i++) {
         out
           << mesh.Cell3DsId[i] << ";"
-		  //marker
+		  << mesh.Cell3DsVisibility[i] << ";"
           << mesh.Cell3DsNumVert[i] << ";";
 		
 		for (size_t j = 0; j < mesh.Cell3DsVertices[i].size(); j++) {

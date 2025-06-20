@@ -316,7 +316,7 @@ cout<<mesh.NumCell0Ds;
 
         utilities.ExportPoints("./Cell0Ds.inp",
                                mesh.Cell0DsCoordinates.transpose(),
-                               {});
+                               cell0Ds_properties);
     }
 
     {
@@ -338,7 +338,7 @@ cout<<mesh.NumCell0Ds;
                                  mesh.Cell0DsCoordinates.transpose(),
                                  mesh.Cell1DsExtrema.transpose(),
                                  {},
-									 {});
+									 cell1Ds_properties);
     }
 	
 	

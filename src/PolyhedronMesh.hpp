@@ -42,7 +42,7 @@ struct PolyhedronMesh
 	vector<vector<int>>	Cell3DsVertices;
 	vector<vector<int>>	Cell3DsEdges;
 	vector<vector<int>>	Cell3DsFaces;
-	map<int, list<int>> Cell3DsMarker;
+	map<int,list<int>> Cell3DsMarker;
 
 
 

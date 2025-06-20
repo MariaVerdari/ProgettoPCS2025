@@ -2,7 +2,7 @@
 #include "PolyhedronMesh.hpp"
 #include "UCDUtilities.hpp"
 #include <iostream>
-#include <ofstream>
+#include <fstream>
 
 using namespace std;
 using namespace Eigen;
@@ -314,74 +314,6 @@ cout<<mesh.NumCell0Ds;
 									 {});
     }
 	
-	void writeCell0Ds(const PolyhedronMesh& mesh, const string& filename) {
-    ofstream out(filename);
-	out << "Id;Marker;X;Y;Z" << endl;
-    for (unsigned i = 0; i < mesh.NumCell0Ds; i++) {
-        out
-          << mesh.Cell0DsId[i] << ";"
-		  // marker << mesh.
-          << mesh.Cell0DsCoordinates(i, 0) << ";"
-          << mesh.Cell0DsCoordinates(i, 1) << ";"
-          << mesh.Cell0DsCoordinates(i, 2) << endl;
-    }
-	}
-	
-	void writeCell1Ds(const PolyhedronMesh& mesh, const string& filename) {
-    ofstream out(filename);
-    out << "Id;Marker;Origin;End" << endl; 
-    for (unsigned i = 0; i < mesh.NumCell1Ds; i++) {
-        out
-          << mesh.Cell1DsId[i] << ";"
-		  //marker
-          << mesh.Cell1DsExtrema(i, 0) << ";"
-          << mesh.Cell1DsExtrema(i, 1) << endl;
-    }
-	}
-	
-	void writeCell2Ds(const PolyhedronMesh& mesh, const string& filename) {
-    ofstream out(filename);
-    out << "Id;Marker;NumVertices;NumEdges;Vertices;Edges" << endl;
-    for (unsigned i = 0; i < mesh.NumCell2Ds; i++) {
-        out
-          << mesh.Cell2DsId[i] << ";"
-		//marker
-          << mesh.Cell2DsNumVert[i] << ";"
-          << mesh.Cell2DsNumEdg[i]; << ";";
-        for (size_t j = 0; j < mesh.Cell2DsVertices[i].size(); j++) {
-			out << " " << mesh.Cell2DsVertices[i][j];
-		}
-		  << ";";
-		for (size_t j = 0; j < mesh.Cell2DsEdges[i].size(); j++) {
-			out << " " << mesh.Cell2DsEdges[i][j];
-		}
-        out << endl;
-    }
-	}
-	
-	void writeCell3Ds(const PolyhedronMesh& mesh, const string& filename) {
-    ofstream out(filename);
-    out << "Id;Marker;NumVertices,NumEdges;NumFaces;Vertices;Edges;Faces" << endl;
-    for (unsigned i = 0; i < mesh.NumCell3Ds; i++) {
-        out
-          << mesh.Cell3DsId[i] << ";"
-		  //marker
-          << mesh.Cell3DsNumVert[i] << ";"
-          << mesh.Cell3DsNumEdg[i] << ";"
-          << mesh.Cell3DsNumFaces[i] << ";";
-		
-		for (size_t j = 0; j < mesh.Cell3DsVertices[i].size(); j++) {
-			out << " " << mesh.Cell3DsVertices[i][j];
-		} << ";"
-		for (size_t j = 0; j < mesh.Cell3DsEdges[i].size(); j++) {
-			out << " " << mesh.Cell3DsEdges[i][j];
-		} << ";";
-        for (size_t j = 0; j < mesh.Cell3DsFaces[i].size(); j++) {
-			out << " " << mesh.Cell3DsFaces[i][j];
-		}
-        out << endl;
-    }
-	}
 	
 	writeCell0Ds(mesh, "Cell0Ds.txt");
     writeCell1Ds(mesh, "Cell1Ds.txt");

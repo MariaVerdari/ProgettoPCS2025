@@ -312,6 +312,77 @@ cout<<mesh.NumCell0Ds;
                                  {},
 									 {});
     }
+	
+	void writeCell0Ds(const PolyhedronMesh& mesh, const string& filename) {
+    ofstream out(filename);
+    // ID e coordinate x y z
+    for (unsigned i = 0; i < Mesh.NumCell0Ds; ++i) {
+        out
+          << mesh.Cell0DsId[i] << " "
+          << mesh.Cell0DsCoordinates(i, 0) << " "
+          << mesh.Cell0DsCoordinates(i, 1) << " "
+          << mesh.Cell0DsCoordinates(i, 2) << "\n";
+    }
+	}
+	
+	void writeCell1Ds(const PolyhedronMesh& mesh, const string& filename) {
+    ofstream out(filename);
+    // ID e due estremi
+    for (unsigned i = 0; i < M.NumCell1Ds; ++i) {
+        out
+          << mesh.Cell1DsId[i] << " "
+          << mesh.Cell1DsExtrema(i, 0) << " "
+          << mesh.Cell1DsExtrema(i, 1) << "\n";
+    }
+	}
+	
+	void writeCell2Ds(const PolyhedronMesh& mesh, const string& filename) {
+    ofstream out(filename);
+    // ID, numVert, numEdg, poi liste vertici e archi
+    for (unsigned i = 0; i < M.NumCell2Ds; ++i) {
+        out
+          << mesh.Cell2DsId[i] << " "
+          << mesh.Cell2DsNumVert[i] << " "
+          << mesh.Cell2DsNumEdg[i];
+        for (size_t j = 0; j < mesh.Cell2DsVertices[i].size(); j++) {
+			out << " " << mesh.Cell2DsVertices[i][j];
+		}
+		for (size_t j = 0; j < mesh.Cell2DsEdges[i].size(); j++) {
+			out << " " << mesh.Cell2DsEdges[i][j];
+		}
+        out << "\n";
+    }
+	}
+	
+	void writeCell3Ds(const PolyhedronMesh& mesh, const string& filename) {
+    ofstream out(filename);
+    // ID, numVert, numEdg, numFaces, poi liste vertici, archi, facce
+    for (unsigned i = 0; i < mesh.NumCell3Ds; ++i) {
+        out
+          << mesh.Cell3DsId[i] << " "
+          << mesh.Cell3DsNumVert[i] << " "
+          << mesh.Cell3DsNumEdg[i] << " "
+          << mesh.Cell3DsNumFaces[i];
+		
+		for (size_t j = 0; j < mesh.Cell3DsVertices[i].size(); j++) {
+			out << " " << mesh.Cell3DsVertices[i][j];
+		}
+		for (size_t j = 0; j < mesh.Cell3DsEdges[i].size(); j++) {
+			out << " " << mesh.Cell3DsEdges[i][j];
+		}
+        for (size_t j = 0; j < mesh.Cell3DsFaces[i].size(); j++) {
+			out << " " << mesh.Cell3DsFaces[i][j];
+		}
+        out << "\n";
+    }
+	}
+	
+	writeCell0Ds(mesh, "Cell0Ds.txt");
+    writeCell1Ds(mesh, "Cell1Ds.txt");
+    writeCell2Ds(mesh, "Cell2Ds.txt");
+    writeCell3Ds(mesh, "Cell3Ds.txt");
+
+    cout << "Output scritto in Cell0Ds.txt, Cell1Ds.txt, Cell2Ds.txt, Cell3Ds.txt\n";
 
 
 return 0;

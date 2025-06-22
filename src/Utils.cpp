@@ -787,9 +787,11 @@ return true;
 }
 
 bool Duale (PolyhedronMesh& mesh){
+	vector<int> dualvert;
+	vector<int> dualedg;
+	vector<int> dualfaces;
     list <unsigned int> facce1 = mesh.Cell2DsMarker[1];
     map <int,int> bari;
-    unsigned int i=0;
     for (unsigned int faccia : facce1){ //ciclo sulle facce per il baricentro
         verticifaccia1 = mesh.Cell3DsVertices[faccia];
         double nuovax = mesh.Cell0DsCoordinates(verticifaccia1[0],0)+mesh.Cell0DsCoordinates(verticifaccia1[1],0)+mesh.Cell0DsCoordinates(verticifaccia1[2],0);
@@ -801,13 +803,13 @@ bool Duale (PolyhedronMesh& mesh){
         double baricentro[3]={nuovax, nuovay, nuovaz};
         Normalizzazione (baricentro);
         mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
+		dualvert.push_back(mesh.NumCell0Ds);
         bari.insert({faccia,mesh.NumCell0Ds});
         mesh.NumCell0Ds++;
         mesh.Cell0DsVisibility.push_back(2);
         mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
             for (unsigned int j=0;j<3;j++)
                mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=baricentro[j];
-        i++;
     }
 
     list <unsigned int> lati1 = mesh.Cell1DsMarker[1];
@@ -818,13 +820,15 @@ bool Duale (PolyhedronMesh& mesh){
         faccecondivise.reserve(2);
         for (unsigned int j = 0; j< mesh.Cell2DsEdges.size(); j++){
             if (find(mesh.Cell2DsEdges[j].begin(), mesh.Cell2DsEdges[j].end(), lato) !=mesh.Cell2DsEdges[j].end()){
+				assert(mesh.Cell2DsVisibility[j]==1);
                 faccecondivise.push_back(j);
             }
         }
         p1 = bari [faccecondivise[0]];
         p2 = bari [faccecondivise[1]];
         mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
-        latinuovi [i]=mesh.NumCell1Ds;
+		dualedg.push_back(mesh.NumCell1Ds);
+        latinuovi[i]=mesh.NumCell1Ds;
         mesh.NumCell1Ds++;
         mesh.Cell1DsVisibility.push_back(2);
         mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
@@ -832,7 +836,55 @@ bool Duale (PolyhedronMesh& mesh){
         mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=p2;
         i++;
     }
-
+	
+	list <unsigned int> vertici1 = mesh.Cell0DsMarker[1];
+	for (unsigned int vertice : vertici1) {   // ciclo sui vertici per facce
+	    vector<int> latifuturi;
+		latifuturi.reserve(6);       //va bene anche per le facce da 4 lati
+		vector<int> puntifuturi;
+		puntifuturi.reserve(6);
+		for (unsigned int lato : lati1) {// troviamo un lato vecchio a cui il punto appartiene (considerandolo prima come origine)
+			if (mesh.Cell1DsExtrema(lato,0)==vertice || mesh.Cell1DsExtrema(lato,1)==vertice) {
+				int latonuovo = latinuovi[lato];
+				latifuturi.push_back(latonuovo);
+				int id_punto = mesh.Cell1DsExtrema(latonuovo,1);
+				puntifuturi.push_back(mesh.Cell1DsExtrema(latonuovo,0);
+				while (id_punto != mesh.Cell1DsExtrema(latonuovo,0) {
+					puntifuturi.push_back(id_punto);
+					for (unsigned int id_lato : latinuovi) {
+							if (mesh.Cell1DsExtrema(id_lato,0)==id_punto || mesh.Cell1DsExtrema(id_lato,1)==id_punto) {
+								if (id_lato != latonuovo) {
+									latifuturi.push_back(id_lato);
+									if (mesh.Cell1DsExtrema(id_lato,0)==id_punto) 
+										id_punto = mesh.Cell1DsExtrema(id_lato, 1);
+									else
+										id_punto = mesh.Cell1DsExtrema(id_lato,0);
+								}
+							}
+						
+					}
+				} //fine while
+		break;
+	}
+	}
+	mesh.Cell2DsId.push_back(mesh.NumCell2Ds);
+	dualfaces.push_back(mesh.NumCell2Ds);
+	mesh.NumCell2Ds++;
+	mesh.Cell2DsNumVert.push_back(puntifuturi.size());
+	mesh.Cell2DsNumEdg.push_back(latifuturi.size());
+	mesh.Cell2DsVertices.push_back(puntifuturi);
+	mesh.Cell2DsEdges.push_back(latifuturi);
+	mesh.Cell2DsVisibility.push_back(2);
+	}
+	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
+	mesh.NumCell3Ds++;
+	mesh.Cell3DsNumVert.push_back(dualvert.size());
+	mesh.Cell3DsNumEdg.push_back(dualedg.size());
+	mesh.Cell3DsNumFaces.push_back(dualfaces.size());
+	mesh.Cell3DsVertices.push_back(dualvert);
+	mesh.Cell3DsEdges.push_back(dualedg);
+	mesh.Cell3DsFaces.push_back(dualfaces);
+	mesh.Cell3DsVisibility.push_back(2);
     return true;
 }
 

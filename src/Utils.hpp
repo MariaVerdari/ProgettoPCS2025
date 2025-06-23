@@ -13,10 +13,17 @@ namespace PolyhedronLibrary {
 	bool Icosaedro(PolyhedronMesh& mesh);
 	bool Triangolazione(PolyhedronMesh& mesh, int b); 
 	int Duplicato(PolyhedronMesh& mesh, auto& arr);
+	
+	bool Duale (PolyhedronMesh& mesh);
+
 	void writeCell0Ds(const PolyhedronMesh& mesh, const string& filename);
 	void writeCell1Ds(const PolyhedronMesh& mesh, const string& filename);
 	void writeCell2Ds(const PolyhedronMesh& mesh, const string& filename);
 	void writeCell3Ds(const PolyhedronMesh& mesh, const string& filename);
+	void creaMappa (PolyhedronMesh& mesh);
+
+	
+	
 
 
 }

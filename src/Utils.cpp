@@ -203,6 +203,7 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
     mesh.Cell3DsFaces.push_back(faces); 
 
     mesh.Cell3DsVisibility.push_back(0);
+	creaMappa ( mesh);
 
     return true;
 }
@@ -350,6 +351,7 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
     mesh.Cell3DsFaces.push_back(faces); 
 
     mesh.Cell3DsVisibility.push_back(0);
+	creaMappa ( mesh);
 
     return true;
     }
@@ -561,6 +563,7 @@ Matrix<int,20,3>D; // facce in termini dei lati
     mesh.Cell3DsFaces.push_back(faces); 
 
     mesh.Cell3DsVisibility.push_back(0);
+	creaMappa ( mesh);
 
     return true;
 }
@@ -781,19 +784,31 @@ for (int n:verticitr){
 }
 mesh.Cell3DsVertices.push_back(verticitriang);
 mesh.Cell3DsNumVert.push_back(verticitriang.size());
+creaMappa ( mesh);
+
 return true;
 
 
 }
+
+
 
 bool Duale (PolyhedronMesh& mesh){
 	vector<int> dualvert;
 	vector<int> dualedg;
 	vector<int> dualfaces;
     list <unsigned int> facce1 = mesh.Cell2DsMarker[1];
+	
+	cout<<facce1.size()<<endl;
+	
     map <int,int> bari;
     for (unsigned int faccia : facce1){ //ciclo sulle facce per il baricentro
-        verticifaccia1 = mesh.Cell3DsVertices[faccia];
+	cout<<"faccia"<<faccia<<endl;
+			cout<<mesh.Cell3DsVertices.size()<<endl;
+
+        vector<int> verticifaccia1 = mesh.Cell2DsVertices[faccia];
+		//cout<<verticifaccia1.size()<<endl;
+
         double nuovax = mesh.Cell0DsCoordinates(verticifaccia1[0],0)+mesh.Cell0DsCoordinates(verticifaccia1[1],0)+mesh.Cell0DsCoordinates(verticifaccia1[2],0);
         double nuovay = mesh.Cell0DsCoordinates(verticifaccia1[0],1)+mesh.Cell0DsCoordinates(verticifaccia1[1],1)+mesh.Cell0DsCoordinates(verticifaccia1[2],1);
         double nuovaz = mesh.Cell0DsCoordinates(verticifaccia1[0],2)+mesh.Cell0DsCoordinates(verticifaccia1[1],2)+mesh.Cell0DsCoordinates(verticifaccia1[2],2);
@@ -813,9 +828,12 @@ bool Duale (PolyhedronMesh& mesh){
     }
 
     list <unsigned int> lati1 = mesh.Cell1DsMarker[1];
-    int latinuovi[lati1.size()] ;
+    vector<int> latinuovi;
+	latinuovi.reserve(lati1.size()) ;
+	cout<<lati1.size()<<endl;
     unsigned int i=0;
     for (unsigned int lato : lati1){ //ciclo sui lati per lati nuovi
+	cout <<"ciclo lati"<<endl;
         vector<int> faccecondivise;
         faccecondivise.reserve(2);
         for (unsigned int j = 0; j< mesh.Cell2DsEdges.size(); j++){
@@ -824,11 +842,14 @@ bool Duale (PolyhedronMesh& mesh){
                 faccecondivise.push_back(j);
             }
         }
-        p1 = bari [faccecondivise[0]];
-        p2 = bari [faccecondivise[1]];
+        int p1 = bari [faccecondivise[0]];
+        int p2 = bari [faccecondivise[1]];
+		if (faccecondivise.size() != 2) {
+}
+
         mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
 		dualedg.push_back(mesh.NumCell1Ds);
-        latinuovi[i]=mesh.NumCell1Ds;
+        latinuovi.push_back(mesh.NumCell1Ds);
         mesh.NumCell1Ds++;
         mesh.Cell1DsVisibility.push_back(2);
         mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
@@ -836,37 +857,47 @@ bool Duale (PolyhedronMesh& mesh){
         mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=p2;
         i++;
     }
-	
+	/*
 	list <unsigned int> vertici1 = mesh.Cell0DsMarker[1];
-	for (unsigned int vertice : vertici1) {   // ciclo sui vertici per facce
+	for (unsigned int vertice : vertici1) {   // ciclo sui vertici per creare facce
+	cout <<vertice<<endl;
 	    vector<int> latifuturi;
-		latifuturi.reserve(6);       //va bene anche per le facce da 4 lati
+		latifuturi.reserve(6);   //va bene anche per le facce da 4 lati
 		vector<int> puntifuturi;
 		puntifuturi.reserve(6);
+		unsigned int k = 0;
 		for (unsigned int lato : lati1) {// troviamo un lato vecchio a cui il punto appartiene (considerandolo prima come origine)
 			if (mesh.Cell1DsExtrema(lato,0)==vertice || mesh.Cell1DsExtrema(lato,1)==vertice) {
-				int latonuovo = latinuovi[lato];
+				int latonuovo = latinuovi[k]; //posizione di lato in lati1 = posizione di latonuovo in latinucvi
 				latifuturi.push_back(latonuovo);
 				int id_punto = mesh.Cell1DsExtrema(latonuovo,1);
-				puntifuturi.push_back(mesh.Cell1DsExtrema(latonuovo,0);
-				while (id_punto != mesh.Cell1DsExtrema(latonuovo,0) {
+				puntifuturi.push_back(mesh.Cell1DsExtrema(latonuovo,0));
+				int exlato = latonuovo;
+				while (id_punto != mesh.Cell1DsExtrema(latonuovo,0)) {
+					cout<<id_punto<<endl;
 					puntifuturi.push_back(id_punto);
 					for (unsigned int id_lato : latinuovi) {
+							cout<<id_lato<<endl;
+
 							if (mesh.Cell1DsExtrema(id_lato,0)==id_punto || mesh.Cell1DsExtrema(id_lato,1)==id_punto) {
-								if (id_lato != latonuovo) {
+								if (id_lato != exlato) {
 									latifuturi.push_back(id_lato);
+									exlato = id_lato;
 									if (mesh.Cell1DsExtrema(id_lato,0)==id_punto) 
 										id_punto = mesh.Cell1DsExtrema(id_lato, 1);
 									else
 										id_punto = mesh.Cell1DsExtrema(id_lato,0);
 								}
+							
 							}
 						
 					}
 				} //fine while
 		break;
 	}
+	k++;
 	}
+	
 	mesh.Cell2DsId.push_back(mesh.NumCell2Ds);
 	dualfaces.push_back(mesh.NumCell2Ds);
 	mesh.NumCell2Ds++;
@@ -876,15 +907,20 @@ bool Duale (PolyhedronMesh& mesh){
 	mesh.Cell2DsEdges.push_back(latifuturi);
 	mesh.Cell2DsVisibility.push_back(2);
 	}
+	
 	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
 	mesh.NumCell3Ds++;
 	mesh.Cell3DsNumVert.push_back(dualvert.size());
+	
 	mesh.Cell3DsNumEdg.push_back(dualedg.size());
 	mesh.Cell3DsNumFaces.push_back(dualfaces.size());
 	mesh.Cell3DsVertices.push_back(dualvert);
 	mesh.Cell3DsEdges.push_back(dualedg);
 	mesh.Cell3DsFaces.push_back(dualfaces);
 	mesh.Cell3DsVisibility.push_back(2);
+	*/
+	creaMappa ( mesh);
+
     return true;
 }
 
@@ -959,6 +995,40 @@ bool Duale (PolyhedronMesh& mesh){
 		}
         out << endl;
     }
+	}
+	
+	
+	
+	void creaMappa (PolyhedronMesh& mesh){
+	for ( unsigned int i=0; i < mesh.Cell0DsVisibility.size() ; i++){
+		list<unsigned int> lista = {i};
+		auto result = (mesh.Cell0DsMarker).insert({mesh.Cell0DsVisibility[i],lista});
+		if (!result.second){
+			((*(result.first)).second).push_back(i);
+		}
+	}
+	for ( unsigned int i=0; i < mesh.Cell1DsVisibility.size() ; i++){
+		list<unsigned int> lista = {i};
+		auto result = (mesh.Cell1DsMarker).insert({mesh.Cell1DsVisibility[i],lista});
+		if (!result.second){
+			((*(result.first)).second).push_back(i);
+		}
+	}
+	for ( unsigned int i=0; i < mesh.Cell2DsVisibility.size() ; i++){
+		list<unsigned int> lista = {i};
+		auto result = (mesh.Cell2DsMarker).insert({mesh.Cell2DsVisibility[i],lista});
+		if (!result.second){
+			((*(result.first)).second).push_back(i);
+		}
+	}
+	for ( unsigned int i=0; i < mesh.Cell3DsVisibility.size() ; i++){
+		list<unsigned int> lista = {i};
+		auto result = (mesh.Cell3DsMarker).insert({mesh.Cell3DsVisibility[i],lista});
+		if (!result.second){
+			((*(result.first)).second).push_back(i);
+		}
+	}
+	
 	}
 
 

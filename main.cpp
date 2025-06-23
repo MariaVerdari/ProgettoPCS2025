@@ -86,17 +86,29 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 				
 				
 			
-			} else if (q ==3) // duale
+			} else if (q ==3) // duale seconda classe
 			{
 				switch(p){
 					
 					case 4: //ottaedro
+					if (!Ottaedro(mesh))
+						{
+							cerr << "Errore nella formazione dell'icosaedro"<< endl;
+							return 1;
+						}
+					
+
 					break;
 						
 	
 					
 
 					case 5: //icosaedro
+					if (!Icosaedro(mesh))
+						{
+							cerr << "Errore nella formazione dell'icosaedro"<< endl;
+							return 1;
+						}
 					break;
 					
 					default:
@@ -104,6 +116,16 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 					return 1;
 					
 				}
+				
+				
+				//altra tr
+							
+				if (!Duale(mesh)) //duale
+				{
+					cerr << "Errore nella dualizzazione"<< endl;
+					return 1;
+				}
+							
 			} else { //nessuno dei due casi
 			cerr << "Errore: nessuno degli argomenti p e q è pari a 3"<<endl;
 			return 1;
@@ -170,16 +192,28 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 				
 			
 			} else if (q ==3) // duale
-			{
+			{ 
 				switch(p){
 					
 					case 4: //ottaedro
+						if (!Ottaedro(mesh))
+						{
+							cerr << "Errore nella formazione dell'ottaedro"<< endl;
+							return 1;
+						}
+						break;
 					break;
 						
 	
 					
 
 					case 5: //icosaedro
+						if (!Icosaedro(mesh))
+						{
+							cerr << "Errore nella formazione dell'ottaedro"<< endl;
+							return 1;
+						}
+						break;
 					break;
 					
 					default:
@@ -187,6 +221,18 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 					return 1;
 					
 				}
+				
+				if (!Triangolazione(mesh, b)) //triangolazione
+							{
+								cerr << "Errore nella triangolazione"<< endl;
+								return 1;
+							}
+				if (!Duale(mesh)) //duale
+				{
+					cerr << "Errore nella dualizzazione"<< endl;
+					return 1;
+				}
+				
 			} else { //nessuno dei due casi
 			cerr << "Errore: nessuno degli argomenti p e q è pari a 3"<<endl;
 			return 1;
@@ -239,36 +285,6 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 		
 
 	
-	for ( unsigned int i=0; i < mesh.Cell0DsVisibility.size() ; i++){
-		list<unsigned int> lista = {i};
-		auto result = (mesh.Cell0DsMarker).insert({mesh.Cell0DsVisibility[i],lista});
-		if (!result.second){
-			((*(result.first)).second).push_back(i);
-		}
-	}
-	for ( unsigned int i=0; i < mesh.Cell1DsVisibility.size() ; i++){
-		list<unsigned int> lista = {i};
-		auto result = (mesh.Cell1DsMarker).insert({mesh.Cell1DsVisibility[i],lista});
-		if (!result.second){
-			((*(result.first)).second).push_back(i);
-		}
-	}
-	for ( unsigned int i=0; i < mesh.Cell2DsVisibility.size() ; i++){
-		list<unsigned int> lista = {i};
-		auto result = (mesh.Cell2DsMarker).insert({mesh.Cell2DsVisibility[i],lista});
-		if (!result.second){
-			((*(result.first)).second).push_back(i);
-		}
-	}
-	for ( unsigned int i=0; i < mesh.Cell3DsVisibility.size() ; i++){
-		list<unsigned int> lista = {i};
-		auto result = (mesh.Cell3DsMarker).insert({mesh.Cell3DsVisibility[i],lista});
-		if (!result.second){
-			((*(result.first)).second).push_back(i);
-		}
-	}
-	
-
 
 /*
 for (unsigned int i=0; i<mesh.NumCell0Ds; i++){

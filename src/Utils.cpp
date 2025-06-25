@@ -799,15 +799,11 @@ bool Duale (PolyhedronMesh& mesh){
 	vector<int> dualfaces;
     list <unsigned int> facce1 = mesh.Cell2DsMarker[1];
 	
-	cout<<facce1.size()<<endl;
 	
     map <int,int> bari;
     for (unsigned int faccia : facce1){ //ciclo sulle facce per il baricentro
-	cout<<"faccia"<<faccia<<endl;
-			cout<<mesh.Cell3DsVertices.size()<<endl;
 
         vector<int> verticifaccia1 = mesh.Cell2DsVertices[faccia];
-		//cout<<verticifaccia1.size()<<endl;
 
         double nuovax = mesh.Cell0DsCoordinates(verticifaccia1[0],0)+mesh.Cell0DsCoordinates(verticifaccia1[1],0)+mesh.Cell0DsCoordinates(verticifaccia1[2],0);
         double nuovay = mesh.Cell0DsCoordinates(verticifaccia1[0],1)+mesh.Cell0DsCoordinates(verticifaccia1[1],1)+mesh.Cell0DsCoordinates(verticifaccia1[2],1);
@@ -827,13 +823,11 @@ bool Duale (PolyhedronMesh& mesh){
                mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=baricentro[j];
     }
 
-    list <unsigned int> lati1 = mesh.Cell1DsMarker[1];
+    list <unsigned int> lati1 = mesh.Cell1DsMarker[1];    
     vector<int> latinuovi;
 	latinuovi.reserve(lati1.size()) ;
-	cout<<lati1.size()<<endl;
     unsigned int i=0;
     for (unsigned int lato : lati1){ //ciclo sui lati per lati nuovi
-	cout <<"ciclo lati"<<endl;
         vector<int> faccecondivise;
         faccecondivise.reserve(2);
         for (unsigned int j = 0; j< mesh.Cell2DsEdges.size(); j++){
@@ -845,6 +839,7 @@ bool Duale (PolyhedronMesh& mesh){
         int p1 = bari [faccecondivise[0]];
         int p2 = bari [faccecondivise[1]];
 		if (faccecondivise.size() != 2) {
+		cerr << "più di due facce condivise" << endl;
 }
 
         mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -857,47 +852,46 @@ bool Duale (PolyhedronMesh& mesh){
         mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=p2;
         i++;
     }
-	/*
+
 	list <unsigned int> vertici1 = mesh.Cell0DsMarker[1];
 	for (unsigned int vertice : vertici1) {   // ciclo sui vertici per creare facce
-	cout <<vertice<<endl;
 	    vector<int> latifuturi;
-		latifuturi.reserve(6);   //va bene anche per le facce da 4 lati
+		latifuturi.reserve(6);   //va bene anche per le facce da 4 o 5 lati
 		vector<int> puntifuturi;
 		puntifuturi.reserve(6);
 		unsigned int k = 0;
-		for (unsigned int lato : lati1) {// troviamo un lato vecchio a cui il punto appartiene (considerandolo prima come origine)
+		
+		vector<int> latiaccettabili;
+		latiaccettabili.reserve(6);
+		for (unsigned int lato : lati1) {// troviamo i lati vecchi a cui il punto appartiene
 			if (mesh.Cell1DsExtrema(lato,0)==vertice || mesh.Cell1DsExtrema(lato,1)==vertice) {
-				int latonuovo = latinuovi[k]; //posizione di lato in lati1 = posizione di latonuovo in latinucvi
-				latifuturi.push_back(latonuovo);
-				int id_punto = mesh.Cell1DsExtrema(latonuovo,1);
-				puntifuturi.push_back(mesh.Cell1DsExtrema(latonuovo,0));
-				int exlato = latonuovo;
-				while (id_punto != mesh.Cell1DsExtrema(latonuovo,0)) {
-					cout<<id_punto<<endl;
-					puntifuturi.push_back(id_punto);
-					for (unsigned int id_lato : latinuovi) {
-							cout<<id_lato<<endl;
-
-							if (mesh.Cell1DsExtrema(id_lato,0)==id_punto || mesh.Cell1DsExtrema(id_lato,1)==id_punto) {
-								if (id_lato != exlato) {
-									latifuturi.push_back(id_lato);
-									exlato = id_lato;
-									if (mesh.Cell1DsExtrema(id_lato,0)==id_punto) 
-										id_punto = mesh.Cell1DsExtrema(id_lato, 1);
-									else
-										id_punto = mesh.Cell1DsExtrema(id_lato,0);
-								}
-							
-							}
-						
+				latiaccettabili.push_back(latinuovi[k]);
+			}
+			k++;
+		}
+		int latonuovo = latiaccettabili[0]; //prendo il primo lato accettabile
+		latifuturi.push_back(latonuovo);
+		int id_punto = mesh.Cell1DsExtrema(latonuovo,1);
+		puntifuturi.push_back(mesh.Cell1DsExtrema(latonuovo,0));
+		int exlato = latonuovo;
+		while (id_punto != mesh.Cell1DsExtrema(latonuovo,0)) {
+			puntifuturi.push_back(id_punto);
+			for (unsigned int id_lato : latiaccettabili) {
+				if (mesh.Cell1DsExtrema(id_lato,0)==id_punto || mesh.Cell1DsExtrema(id_lato,1)==id_punto) {
+					if (id_lato != exlato) {
+						latifuturi.push_back(id_lato);
+						exlato = id_lato;
+						if (mesh.Cell1DsExtrema(id_lato,0)==id_punto) 
+							id_punto = mesh.Cell1DsExtrema(id_lato, 1);
+						else
+							id_punto = mesh.Cell1DsExtrema(id_lato,0);
+					break;
 					}
-				} //fine while
-		break;
-	}
-	k++;
-	}
-	
+				}
+						
+			}
+		} //fine while
+
 	mesh.Cell2DsId.push_back(mesh.NumCell2Ds);
 	dualfaces.push_back(mesh.NumCell2Ds);
 	mesh.NumCell2Ds++;
@@ -907,7 +901,7 @@ bool Duale (PolyhedronMesh& mesh){
 	mesh.Cell2DsEdges.push_back(latifuturi);
 	mesh.Cell2DsVisibility.push_back(2);
 	}
-	
+
 	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
 	mesh.NumCell3Ds++;
 	mesh.Cell3DsNumVert.push_back(dualvert.size());
@@ -916,12 +910,13 @@ bool Duale (PolyhedronMesh& mesh){
 	mesh.Cell3DsNumFaces.push_back(dualfaces.size());
 	mesh.Cell3DsVertices.push_back(dualvert);
 	mesh.Cell3DsEdges.push_back(dualedg);
-	mesh.Cell3DsFaces.push_back(dualfaces);
+	mesh.Cell3DsFaces.push_back(dualfaces); 
 	mesh.Cell3DsVisibility.push_back(2);
-	*/
+
 	creaMappa ( mesh);
 
     return true;
+
 }
 
 
@@ -1034,3 +1029,5 @@ bool Duale (PolyhedronMesh& mesh){
 
 
 }
+
+/// Nota: ci sono 3 lati accettabili con il punto 746 nell'ultimo caso

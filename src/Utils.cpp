@@ -1030,4 +1030,250 @@ bool Duale (PolyhedronMesh& mesh){
 
 }
 
-/// Nota: ci sono 3 lati accettabili con il punto 746 nell'ultimo caso
+bool Triangolazione2(PolyhedronMesh& mesh, int b){ 
+    set <int> verticitr;
+    
+	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
+	mesh.NumCell3Ds ++;
+
+	mesh.Cell3DsVisibility.push_back(1);
+
+	map<vector<int>, int> latiEsistenti;
+	vector <int> faccetr;
+
+
+	int exNumCell0Ds = mesh.NumCell0Ds;
+	vector<int> facce = mesh.Cell3DsFaces[0]; //facce di partenza
+	for (unsigned int numerofaccia=0; numerofaccia<mesh.Cell3DsNumFaces[0]; numerofaccia++) {// ciclo su ogni faccia
+		int faccia = facce[numerofaccia];
+		vector<int> latifaccia = mesh.Cell2DsEdges[faccia];
+		vector<int> verticifaccia= mesh.Cell2DsVertices[faccia];
+		MatrixXd coordpunti(3,3);
+		for (unsigned int punto = 0; punto<3; punto++) {
+			for (unsigned int coordinata = 0; coordinata < 3; coordinata++) {
+				coordpunti(punto, coordinata) = mesh.Cell0DsCoordinates(verticifaccia[punto], coordinata);
+        }
+}
+		vector<vector<int>> griglia;
+		griglia.reserve(b+1);
+
+		for (unsigned int i = 0; i<=b; i++) {
+			vector<int> rigaGriglia;
+			rigaGriglia.reserve(b-i+1);
+		for (unsigned int j=0; j<=b-i; j++) {
+			unsigned int k = b-i-j;
+			double nuovax = (i*coordpunti(0,0)+j*coordpunti(1,0)+k*coordpunti(2,0))/b;
+			double nuovay = (i*coordpunti(0,1)+j*coordpunti(1,1)+k*coordpunti(2,1))/b;
+			double nuovaz = (i*coordpunti(0,2)+j*coordpunti(1,2)+k*coordpunti(2,2))/b;
+			double nuovopunto[3] = {nuovax, nuovay, nuovaz};
+			Normalizzazione(nuovopunto);
+        
+        int a = Duplicato(mesh,nuovopunto);
+        if (a == -1) {
+            a = mesh.NumCell0Ds;        
+            mesh.Cell0DsId.push_back(a);
+            mesh.NumCell0Ds++;
+            mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
+            for (unsigned int j=0;j<3;j++)
+               mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=nuovopunto[j];
+            mesh.Cell0DsVisibility.push_back(1);
+        
+		}
+		else {
+			mesh.Cell0DsVisibility[a]=1;
+		}
+		rigaGriglia.push_back(a);
+		verticitr.insert(a);
+    
+        }
+        griglia.push_back(rigaGriglia);
+        
+        
+}// fine cilco dei vertici
+vector <int> v1;
+vector <int> v2;
+vector <int> v3;
+vector <int> v4;
+vector <int> v5;
+vector <int> faccetemp;
+
+for (unsigned int i = 0; i <b; i++){
+    for (unsigned int j = 0; j < b-i; j++){
+        int p1 = griglia[i][j];
+        int p2 = griglia[i][j+1];
+        int p3 = griglia[i+1][j];
+        
+        if (p1>p2)
+            v1 = {p1,p2};  // se i=0 sarà giallo
+        else
+            v1 = {p2,p1};
+        
+        int v1id;
+        auto result = latiEsistenti.insert({v1, mesh.NumCell1Ds});
+        if (result.second) {
+            mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+            v1id = mesh.NumCell1Ds;
+            mesh.NumCell1Ds++;
+            mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=v1[0];
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=v1[1];
+            mesh.Cell1DsVisibility.push_back(10);
+
+    
+        } else {
+            v1id=(*(result.first)).second;
+        }
+        if (p2>p3)
+            v2 = {p2,p3};    //se p2 e p3 sono alla fine dei loro vettori, quindi se j=b-i-1 sarà giallo
+        else
+            v2 = {p3,p2};
+        
+        int v2id;
+        result = latiEsistenti.insert({v2, mesh.NumCell1Ds});
+        if (result.second) {
+            mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+            v2id = mesh.NumCell1Ds;
+            mesh.NumCell1Ds++;
+            mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=v2[0];
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=v2[1];
+            mesh.Cell1DsVisibility.push_back(10);
+		} 
+		else {
+            v2id=(*(result.first)).second;
+        }
+        if (p1>p3)
+            v3 = {p1,p3};   // sarà giallo se j=0
+        else
+            v3 = {p3,p1};
+        int v3id;
+        result = latiEsistenti.insert({v3, mesh.NumCell1Ds});
+        if (result.second) {
+            mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+            v3id = mesh.NumCell1Ds;
+            mesh.NumCell1Ds++;
+            mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=v3[0];
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=v3[1];
+            mesh.Cell1DsVisibility.push_back(10);
+    
+        } else {
+            v3id=(*(result.first)).second;;
+        }//facce
+        mesh.Cell2DsId.push_back(mesh.NumCell2Ds);
+		faccetemp.push_back(mesh.NumCell2Ds);
+        mesh.NumCell2Ds++;
+        mesh.Cell2DsNumVert.push_back(3);
+        mesh.Cell2DsNumEdg.push_back(3);
+        vector <int> abc = {p1,p2,p3};
+        mesh.Cell2DsVertices.push_back(abc);
+        vector <int> v123 = {v1id,v2id,v3id};
+        mesh.Cell2DsEdges.push_back(v123);
+        mesh.Cell2DsVisibility.push_back(10);
+
+        if (j!=b-i-1){//antagonista
+            int p4 = griglia [i+1][j+1];
+            if (p4>p2)
+                v4 = {p4,p2}; // mai giallo
+            else
+                v4 = {p2,p4};
+            int v4id;
+        result = latiEsistenti.insert({v4, mesh.NumCell1Ds});
+        if (result.second) {
+            mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+            v4id = mesh.NumCell1Ds;
+            mesh.NumCell1Ds++;
+            mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=v4[0];
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=v4[1];
+            mesh.Cell1DsVisibility.push_back(10);
+        } else {
+            v4id=(*(result.first)).second;;
+        }
+
+
+            if (p4>p3)
+                v5 = {p4,p3};   //mai giallo
+            else
+                v5 = {p3,p4};
+
+            int v5id;
+        result = latiEsistenti.insert({v5, mesh.NumCell1Ds});
+        if (result.second) {
+            mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+            v5id = mesh.NumCell1Ds;
+            mesh.NumCell1Ds++;
+            mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=v5[0];
+            mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=v5[1];
+            mesh.Cell1DsVisibility.push_back(10);
+        } else {
+            v5id=(*(result.first)).second;;
+        }//facce antagonista
+        mesh.Cell2DsId.push_back(mesh.NumCell2Ds);
+        faccetemp.push_back(mesh.NumCell2Ds);
+        mesh.NumCell2Ds++;
+        mesh.Cell2DsNumVert.push_back(3);
+        mesh.Cell2DsNumEdg.push_back(3);
+        vector <int> bdc = {p2,p4,p3};
+        mesh.Cell2DsVertices.push_back(bdc);
+        vector <int> v452 = {v4id,v5id,v2id};
+        mesh.Cell2DsEdges.push_back(v452);
+        mesh.Cell2DsVisibility.push_back(10);
+
+        }//chiude if antagonista
+        
+    }
+}
+	map <int,int> bari;
+	for (int faccia : faccetemp) {
+		vector<int> verticifaccia1 = mesh.Cell2DsVertices[faccia];
+        double nuovax = mesh.Cell0DsCoordinates(verticifaccia1[0],0)+mesh.Cell0DsCoordinates(verticifaccia1[1],0)+mesh.Cell0DsCoordinates(verticifaccia1[2],0);
+        double nuovay = mesh.Cell0DsCoordinates(verticifaccia1[0],1)+mesh.Cell0DsCoordinates(verticifaccia1[1],1)+mesh.Cell0DsCoordinates(verticifaccia1[2],1);
+        double nuovaz = mesh.Cell0DsCoordinates(verticifaccia1[0],2)+mesh.Cell0DsCoordinates(verticifaccia1[1],2)+mesh.Cell0DsCoordinates(verticifaccia1[2],2);
+        nuovax = nuovax/3.0;
+        nuovay = nuovay/3.0;
+        nuovaz = nuovaz/3.0;
+        double baricentro[3]={nuovax, nuovay, nuovaz};
+        Normalizzazione (baricentro);
+		bari.insert({faccia,mesh.NumCell0Ds});
+		mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
+        mesh.NumCell0Ds++;
+        mesh.Cell0DsVisibility.push_back(1);
+        mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
+            for (unsigned int j=0;j<3;j++)
+               mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=baricentro[j];
+		
+			
+		}
+
+}// fine ciclo faccia
+mesh.Cell3DsFaces.push_back(faccetr);
+mesh.Cell3DsNumFaces.push_back(faccetr.size());
+vector <int> latitr ;
+latitr.reserve(latiEsistenti.size());
+for (map <vector<int>, int>::iterator it=latiEsistenti.begin();it!=latiEsistenti.end();it++){
+    latitr.push_back((*it).second);
+}
+mesh.Cell3DsEdges.push_back(latitr);
+mesh.Cell3DsNumEdg.push_back(latitr.size());
+vector <int> verticitriang;
+verticitriang.reserve(verticitr.size());
+for (int n:verticitr){
+    verticitriang.push_back(n);
+}
+mesh.Cell3DsVertices.push_back(verticitriang);
+mesh.Cell3DsNumVert.push_back(verticitriang.size());
+creaMappa ( mesh);
+
+return true;
+
+
+}
+
+
+
+//creo struttura roba gialla
+//ciclo sui lati gialli e li sostituisco con ogni su ametà aggiungendo i punti alla mesh.
+//
+//

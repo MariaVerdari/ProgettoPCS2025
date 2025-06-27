@@ -136,8 +136,9 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 			
 		}
 		else if (b == 0 || c == 0) { // prima classe
-		if (b == 0)
+		if (b == 0){
 			b = c;
+		c = 0;}
 		
 			
 			if (p == 3){

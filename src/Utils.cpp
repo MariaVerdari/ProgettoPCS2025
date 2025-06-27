@@ -26,6 +26,7 @@ namespace PolyhedronLibrary
 {   
 int Duplicato(PolyhedronMesh& mesh, auto& arr){
     double eps = std::numeric_limits<double>::epsilon();
+
     int a = -1;
 
     for (unsigned int i =0; i<mesh.NumCell0Ds; i++) {
@@ -784,7 +785,10 @@ for (int n:verticitr){
 }
 mesh.Cell3DsVertices.push_back(verticitriang);
 mesh.Cell3DsNumVert.push_back(verticitriang.size());
-creaMappa ( mesh);
+creaMappa(mesh);
+
+
+
 
 return true;
 
@@ -1028,7 +1032,7 @@ bool Duale (PolyhedronMesh& mesh){
 
 
 
-}
+
 
 bool Triangolazione2(PolyhedronMesh& mesh, int b){ 
     set <int> verticitr;
@@ -1273,7 +1277,13 @@ return true;
 
 
 
+
+
 //creo struttura roba gialla
 //ciclo sui lati gialli e li sostituisco con ogni su ametà aggiungendo i punti alla mesh.
 //
 //
+
+
+
+} // fine polyhedron library

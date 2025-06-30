@@ -9,7 +9,7 @@ using namespace Eigen;
 
 namespace PolyhedronLibrary {
 
-struct PolyhedronMesh
+struct PolyhedronMesh 
 {
 	unsigned int NumCell0Ds;
 	unsigned int NumCell1Ds;
@@ -24,11 +24,19 @@ struct PolyhedronMesh
 
 	vector<int> Cell0DsVisibility; 
 	
+	map<int, list<unsigned int>> MappaAdiacenza; //a ogni punto i suoi vicini
+	vector<unsigned int> VerticiMA; // vertici di mappa adiacenza
+	Eigen::MatrixXd MatricePesi; //  distanze tra vertici
+
+	vector<int> camminov; //vertici cammino
+	
 	vector<int> Cell1DsId;
 	Eigen::MatrixXi Cell1DsExtrema; // origin e end
 	map<int, list<unsigned int>> Cell1DsMarker;
 
 	vector<int> Cell1DsVisibility;
+
+	vector<int> camminol; //lati cammino
 
 	
 	vector<int> Cell2DsId;

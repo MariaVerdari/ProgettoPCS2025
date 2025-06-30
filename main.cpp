@@ -14,14 +14,13 @@ using namespace PolyhedronLibrary;
 int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il programma: deve essere 5 o 7
 {	
 	PolyhedronMesh mesh;
+	int d = 0; // prendo un numero d che mi dice quali sono quelli definitivi 
 
 
-	if (argc ==5){ 
-	
+	if (argc == 5 || argc == 7){
 		int quadrupla[4];
-		for (unsigned int i = 0; i < argc-1; i++) { //mi assicuro che tutti gli interi siano validi
+		for (unsigned int i = 0; i < 4; i++) { //mi assicuro che tutti gli interi siano validi
 			istringstream convert(argv[i+1]);
-			string altro;
 			if (!(convert >> quadrupla[i])  || !(convert.eof())) { //no numeri con il punto
 				cerr << "Errore: l'argomento '" << argv[i + 1] << "' non è un intero valido"<<endl;
 				return 1;
@@ -31,12 +30,16 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 		int q = quadrupla[1];
 		int b = quadrupla[2];
 		int c = quadrupla[3];
+		
+		
+		bool Cammino = false;
+		if (argc == 7)
+			bool Cammino = true;
+
+			
 
 		
-		
-		
 		if (b==c){ // seconda classe
-		cout<< "seconda classe b = c"<<endl;
 		
 			
 			if (p == 3){
@@ -138,10 +141,11 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 		else if (b == 0 || c == 0) { // prima classe
 		if (b == 0){
 			b = c;
-		c = 0;}
+			c = 0;}
 		
 			
 			if (p == 3){
+				d = 1;
 				
 				switch(q) {
 					case 3: //tetraedro
@@ -193,7 +197,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 				
 			
 			} else if (q ==3) // duale
-			{ 
+			{ d = 2;
 				switch(p){
 					
 					case 4: //ottaedro
@@ -251,33 +255,65 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 
 	
 		
-	}
 	
-	else if (argc == 7){ // cammino medio
-	
-	
-	
-		int sestupla[6];
-		for (unsigned int i = 0; i < argc -1; i++) { //mi assicuro che tutti gli interi siano validi
-			istringstream convert(argv[i+1]);
-			if (!(convert >> sestupla[i])  || !(convert.eof())) { 
-				cerr << "Errore: l'argomento '" << argv[i + 1] << "' non è un intero valido"<<endl;
+if (Cammino){
+			int v1;
+			int v2;
+			
+
+			
+			list<unsigned int> verticiValidi = mesh.Cell0DsMarker[d];
+
+			istringstream convert(argv[5]);
+			if (!(convert >> v1)  || !(convert.eof())) { //no numeri con il punto
+				cerr << "Errore: l'argomento '" << argv[5] << "' non è un intero valido"<<endl;
 				return 1;
+			} else if (std::find(verticiValidi.begin(), verticiValidi.end(), v1) == verticiValidi.end()) {
+				cerr << "Errore: il vertice '" << argv[5] << "' non è un vertice valido"<<endl;
+				return 1;
+				
 			}
+			
+			istringstream convert1(argv[6]);
+			if (!(convert1 >> v2)  || !(convert1.eof())) { //no numeri con il punto
+				cerr << "Errore: l'argomento '" << argv[6] << "' non è un intero valido"<<endl;
+				return 1;
+			} else if (std::find(verticiValidi.begin(), verticiValidi.end(), v2) == verticiValidi.end()) {
+				cerr << "Errore: il vertice '" << argv[6] << "' non è un vertice valido"<<endl;
+				return 1;
+				
+			}
+			
+		double inf = std::numeric_limits<double>::infinity();
+		vector<int> archi;
+		vector<double> dist;
+		vector<int> pred;
+		CreaMAMP(mesh, d); // chiamo funzione per fare lista adiacenza e matrice pesi 
+		if (!CamminoMinimo(v1,  v2,  dist, archi, pred, mesh)){
+			cerr << "Errore: cammino minimo non trovato"<<endl;
+			return 1;
 		}
-		int p = sestupla[0];
-		int q = sestupla[1];
-		int b = sestupla[2];
-		int c = sestupla[3];
-		int v1 = sestupla[4];
-		int v2 = sestupla[5];
+		auto itpos_v2 = std::find(mesh.VerticiMA.begin(), mesh.VerticiMA.end(), v2); //pos di v2
+		int pos_v2= itpos_v2- mesh.VerticiMA.begin(); 
+		cout<<"Il percorso minimo tra i vertici " << v1<< " e " <<v2<< " ha "<< archi[pos_v2]<<" lati e la somma delle loro lunghezze è "<< dist[pos_v2]<< endl;
+
+
+		// assegno propirta
+		// stampo numero lati e somma lunghezze
+		//testo che dia 0 se è tra lui e se stesso
 		
 		
 	
 
+	 
 	
-	
+			
+
+		} // fine cammino
+		
+
 	}
+
 	
 	else{
 		cerr << "Errore: l'input può essere una quadrupla oppure una sestupla di numeri interi"<<endl;
@@ -312,13 +348,10 @@ cout<<mesh.NumCell0Ds;
 */
 
 
-/// Per visualizzare online le mesh:
-    /// 1. Convertire i file .inp in file .vtu con https://meshconverter.it/it
-    /// 2. Caricare il file .vtu su https://kitware.github.io/glance/app/
 
     Gedim::UCDUtilities utilities;
     {
-        vector<Gedim::UCDProperty<double>> cell0Ds_properties(1);
+        vector<Gedim::UCDProperty<double>> cell0Ds_properties(2);
 
         cell0Ds_properties[0].Label = "Marker";
         cell0Ds_properties[0].UnitLabel = "-";
@@ -328,8 +361,16 @@ cout<<mesh.NumCell0Ds;
         for(const auto &m : mesh.Cell0DsMarker)
             for(const unsigned int id: m.second)
                 cell0Ds_marker.at(id) = m.first;
+			
+		cell0Ds_properties[0].Data = cell0Ds_marker.data();
 
-        cell0Ds_properties[0].Data = cell0Ds_marker.data();
+		
+		cell0Ds_properties[1].Label = "ShortPath";
+        cell0Ds_properties[1].UnitLabel = "-";
+        cell0Ds_properties[1].NumComponents = 1;
+
+		cell0Ds_properties[1].Data = cell0Ds_cammino.data();
+
 
         utilities.ExportPoints("./Cell0Ds.inp",
                                mesh.Cell0DsCoordinates.transpose(),
@@ -338,7 +379,7 @@ cout<<mesh.NumCell0Ds;
 
     {
 
-        vector<Gedim::UCDProperty<double>> cell1Ds_properties(1);
+        vector<Gedim::UCDProperty<double>> cell1Ds_properties(2);
 
         cell1Ds_properties[0].Label = "Marker";
         cell1Ds_properties[0].UnitLabel = "-";
@@ -350,6 +391,15 @@ cout<<mesh.NumCell0Ds;
                 cell1Ds_marker.at(id) = m.first;
 
         cell1Ds_properties[0].Data = cell1Ds_marker.data();
+		
+		
+		cell1Ds_properties[1].Label = "ShortPath";
+        cell1Ds_properties[1].UnitLabel = "-";
+        cell1Ds_properties[1].NumComponents = 1;
+
+		cell1Ds_properties[1].Data = cell1Ds_cammino.data();
+
+
 
         utilities.ExportSegments("./Cell1Ds.inp",
                                  mesh.Cell0DsCoordinates.transpose(),

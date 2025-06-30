@@ -12,6 +12,8 @@
 #include<iostream>
 #include <fstream>
 #include <algorithm>
+#include <queue>
+
 
 using namespace std;
 using namespace Eigen;
@@ -1283,6 +1285,130 @@ return true;
 //ciclo sui lati gialli e li sostituisco con ogni su ametà aggiungendo i punti alla mesh.
 //
 //
+
+
+bool CamminoMinimo(const int v1, const int v2, vector<double>& dist,vector<int>& archi, vector<int>& pred, PolyhedronMesh& mesh){ // come Dijkstra ma si ferma a v2, pesi positivi, grafo non orientati
+	double inf = std::numeric_limits<double>::infinity();
+
+	int n = mesh.MappaAdiacenza.size();
+	map<int, list<unsigned int>> MA = mesh.MappaAdiacenza; 
+	
+	Eigen::MatrixXd W = mesh.MatricePesi;
+	pred.resize(n); //vector dei predecessori
+	dist.resize(n);  //vector delle distanze
+	archi.resize(n);
+	for (int i = 0; i<n; i++){
+		pred[i] =-1;
+		archi[i] =-1;
+		dist[i]= inf;
+	}
+	auto itpos = std::find(mesh.VerticiMA.begin(), mesh.VerticiMA.end(), v1); //pos di v1 
+	int pos = itpos - mesh.VerticiMA.begin();
+	pred[pos] = v1;
+	dist[pos] = 0;
+	archi[pos] =0;
+
+	    
+	priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> pq; // priority queue ordinata in modo crescente
+	for (int i = 0; i<n; i++){
+		pq.push({dist[i],mesh.VerticiMA[i]});
+	} 
+	while (!pq.empty()){
+		auto coppia = pq.top();  //  primo elemento 
+		int u = coppia.second; //primo vertice
+		double uu = coppia.first; 
+
+		pq.pop(); //dequeue primo elemento
+
+
+		auto itposu = std::find(mesh.VerticiMA.begin(), mesh.VerticiMA.end(), u); //pos di u
+		int posu = itposu - mesh.VerticiMA.begin();
+		if (uu > dist[posu]) {
+			continue; //skippo perchè è valore vecchio
+		}
+
+		if (u == v2)
+			return true; //esce
+		
+
+		list<unsigned int> vicini = MA[u];
+		for (unsigned int vic : vicini){
+			auto itposvic = std::find(mesh.VerticiMA.begin(), mesh.VerticiMA.end(), vic); //pos di vic
+			int posvic = itposvic - mesh.VerticiMA.begin();
+
+			if (dist[posvic] > dist[posu] + W(posu, posvic)){
+			pred[posvic] = u;
+			dist[posvic] = dist[posu] + W(posu, posvic);
+			pq.push({dist[posvic], vic}); //metto valore nuovo
+			archi[posvic] = archi[posu] + 1;  // aggiorno archi
+
+			}
+
+		
+			
+		}
+		
+		
+	}
+
+
+	
+
+
+	return false; 
+}
+
+
+
+void CreaMAMP(PolyhedronMesh& mesh, const int d){ 
+	double inf = std::numeric_limits<double>::infinity();
+
+	list<unsigned int> verticiDef = mesh.Cell0DsMarker[d]; // vertici su cui ciclo
+	int n = verticiDef.size(); // numero vertici
+
+	vector<unsigned int> verticiDefv;
+	verticiDefv.reserve(n);
+	list<unsigned int> latiDef =  mesh.Cell1DsMarker[d];
+	mesh.MatricePesi.resize(n,n); //tanto è vuota
+	for (unsigned int v: verticiDef){
+		verticiDefv.push_back(v);
+		list<unsigned int> vicini;
+		for (unsigned int lato : latiDef) {// troviamo i lati a cui il punto appartiene
+			if (mesh.Cell1DsExtrema(lato,0)==v){
+				vicini.push_back(mesh.Cell1DsExtrema(lato,1));
+				
+			}
+			
+			else if (mesh.Cell1DsExtrema(lato,1)==v) 	{
+				vicini.push_back(mesh.Cell1DsExtrema(lato,0));
+			}
+
+	}
+	mesh.MappaAdiacenza.insert({v,vicini});
+	}// chiudo for vertici
+	mesh.VerticiMA = verticiDefv;
+
+	
+	for (unsigned int i = 0; i<n; i++ ){
+		mesh.MatricePesi(i,i) = 0; //diagonale
+		int v1 =verticiDefv[i];
+			for (unsigned int j = i +1; i<n; j++ ){ // è simmetrica
+				int v2 =verticiDefv[j];
+				if (std::find(mesh.MappaAdiacenza[v1].begin(), mesh.MappaAdiacenza[v1].end(), v2) != mesh.MappaAdiacenza[v1].end()) {
+					double distanza = sqrt((mesh.Cell0DsCoordinates(v1,0)-mesh.Cell0DsCoordinates(v2,0))*(mesh.Cell0DsCoordinates(v1,0)-mesh.Cell0DsCoordinates(v2,0)) + (mesh.Cell0DsCoordinates(v1,1)-mesh.Cell0DsCoordinates(v2,1))*(mesh.Cell0DsCoordinates(v1,1)-mesh.Cell0DsCoordinates(v2,1)) + (mesh.Cell0DsCoordinates(v1,2)-mesh.Cell0DsCoordinates(v2,2))*(mesh.Cell0DsCoordinates(v1,2)-mesh.Cell0DsCoordinates(v2,2)));
+					mesh.MatricePesi(i,j) = distanza; 
+					mesh.MatricePesi(j,i) = distanza; 
+		} else{
+			mesh.MatricePesi(i,j) = inf; 
+			mesh.MatricePesi(j,i) = inf; 
+		}
+
+
+	}
+
+}
+}
+
 
 
 

@@ -21,6 +21,10 @@ namespace PolyhedronLibrary {
 	void writeCell2Ds(const PolyhedronMesh& mesh, const string& filename);
 	void writeCell3Ds(const PolyhedronMesh& mesh, const string& filename);
 	void creaMappa (PolyhedronMesh& mesh);
+	void CreaMAMP(PolyhedronMesh& mesh, const int d);
+	bool CamminoMinimo(const int v1, const int v2, vector<double>& dist,vector<int>& archi, vector<int>& pred, PolyhedronMesh& mesh);
+
+
 
 	
 	

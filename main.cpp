@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 		
 		bool Cammino = false;
 		if (argc == 7)
-			bool Cammino = true;
+			Cammino = true;
 
 			
 
@@ -256,7 +256,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 	
 		
 	
-if (Cammino){
+if (Cammino){cout<<"ok"<<endl;
 			int v1;
 			int v2;
 			
@@ -295,7 +295,32 @@ if (Cammino){
 		}
 		auto itpos_v2 = std::find(mesh.VerticiMA.begin(), mesh.VerticiMA.end(), v2); //pos di v2
 		int pos_v2= itpos_v2- mesh.VerticiMA.begin(); 
-		cout<<"Il percorso minimo tra i vertici " << v1<< " e " <<v2<< " ha "<< archi[pos_v2]<<" lati e la somma delle loro lunghezze è "<< dist[pos_v2]<< endl;
+		cout<<"Il cammino minimo tra i vertici " << v1<< " e " <<v2<< " ha "<< archi[pos_v2]<<" lati e la somma delle loro lunghezze è "<< dist[pos_v2]<< endl;
+		
+		int corrente = v2;
+		while (corrente != v1) {
+			mesh.camminov.push_back(corrente);
+			auto itposc = std::find(mesh.VerticiMA.begin(), mesh.VerticiMA.end(), corrente);
+
+			int posc = itposc - mesh.VerticiMA.begin();
+			corrente = pred[posc];
+			
+
+    }
+
+    mesh.camminov.push_back(v1);
+	int m = mesh.camminov.size();
+	for (int i = 0; i< m-1; i++){
+		int a =mesh.camminov[i];
+		int b =mesh.camminov[i+1]; 
+		for (unsigned int lato:mesh.Cell1DsMarker[d]){
+			if ((mesh.Cell1DsExtrema(lato,0) == a && mesh.Cell1DsExtrema(lato,1) == b) || (mesh.Cell1DsExtrema(lato,1) == a && mesh.Cell1DsExtrema(lato,0) == b)){
+				mesh.camminol.push_back(lato);
+			}
+		}
+
+	}
+
 
 
 		// assegno propirta
@@ -364,12 +389,21 @@ cout<<mesh.NumCell0Ds;
 			
 		cell0Ds_properties[0].Data = cell0Ds_marker.data();
 
+		vector<double> cell0Ds_cammino(mesh.NumCell0Ds, 0.0);
+
+		for (int v : mesh.camminov) {
+			cell0Ds_cammino[v] = 1.0;
+		}
+
 		
 		cell0Ds_properties[1].Label = "ShortPath";
         cell0Ds_properties[1].UnitLabel = "-";
         cell0Ds_properties[1].NumComponents = 1;
 
 		cell0Ds_properties[1].Data = cell0Ds_cammino.data();
+		
+
+		
 
 
         utilities.ExportPoints("./Cell0Ds.inp",
@@ -391,6 +425,13 @@ cout<<mesh.NumCell0Ds;
                 cell1Ds_marker.at(id) = m.first;
 
         cell1Ds_properties[0].Data = cell1Ds_marker.data();
+		
+		vector<double> cell1Ds_cammino(mesh.NumCell1Ds, 0.0);
+
+		
+		for (int e : mesh.camminol) {
+			cell1Ds_cammino[e] = 1.0;
+		}
 		
 		
 		cell1Ds_properties[1].Label = "ShortPath";

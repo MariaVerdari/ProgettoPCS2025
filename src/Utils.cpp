@@ -1291,9 +1291,7 @@ bool CamminoMinimo(const int v1, const int v2, vector<double>& dist,vector<int>&
 	double inf = std::numeric_limits<double>::infinity();
 
 	int n = mesh.MappaAdiacenza.size();
-	map<int, list<unsigned int>> MA = mesh.MappaAdiacenza; 
 	
-	Eigen::MatrixXd W = mesh.MatricePesi;
 	pred.resize(n); //vector dei predecessori
 	dist.resize(n);  //vector delle distanze
 	archi.resize(n);
@@ -1316,7 +1314,7 @@ bool CamminoMinimo(const int v1, const int v2, vector<double>& dist,vector<int>&
 	while (!pq.empty()){
 		auto coppia = pq.top();  //  primo elemento 
 		int u = coppia.second; //primo vertice
-		double uu = coppia.first; 
+		double uu = coppia.first; //prima distanza
 
 		pq.pop(); //dequeue primo elemento
 
@@ -1327,18 +1325,19 @@ bool CamminoMinimo(const int v1, const int v2, vector<double>& dist,vector<int>&
 			continue; //skippo perchè è valore vecchio
 		}
 
-		if (u == v2)
+		if (u == v2){
 			return true; //esce
+		}
 		
 
-		list<unsigned int> vicini = MA[u];
+		list<unsigned int> vicini = mesh.MappaAdiacenza[u];
 		for (unsigned int vic : vicini){
 			auto itposvic = std::find(mesh.VerticiMA.begin(), mesh.VerticiMA.end(), vic); //pos di vic
 			int posvic = itposvic - mesh.VerticiMA.begin();
 
-			if (dist[posvic] > dist[posu] + W(posu, posvic)){
+			if (dist[posvic] > dist[posu] + mesh.MatricePesi(posu, posvic)){
 			pred[posvic] = u;
-			dist[posvic] = dist[posu] + W(posu, posvic);
+			dist[posvic] = dist[posu] + mesh.MatricePesi(posu, posvic);
 			pq.push({dist[posvic], vic}); //metto valore nuovo
 			archi[posvic] = archi[posu] + 1;  // aggiorno archi
 
@@ -1392,7 +1391,7 @@ void CreaMAMP(PolyhedronMesh& mesh, const int d){
 	for (unsigned int i = 0; i<n; i++ ){
 		mesh.MatricePesi(i,i) = 0; //diagonale
 		int v1 =verticiDefv[i];
-			for (unsigned int j = i +1; i<n; j++ ){ // è simmetrica
+			for (unsigned int j = i +1; j<n; j++ ){ // è simmetrica
 				int v2 =verticiDefv[j];
 				if (std::find(mesh.MappaAdiacenza[v1].begin(), mesh.MappaAdiacenza[v1].end(), v2) != mesh.MappaAdiacenza[v1].end()) {
 					double distanza = sqrt((mesh.Cell0DsCoordinates(v1,0)-mesh.Cell0DsCoordinates(v2,0))*(mesh.Cell0DsCoordinates(v1,0)-mesh.Cell0DsCoordinates(v2,0)) + (mesh.Cell0DsCoordinates(v1,1)-mesh.Cell0DsCoordinates(v2,1))*(mesh.Cell0DsCoordinates(v1,1)-mesh.Cell0DsCoordinates(v2,1)) + (mesh.Cell0DsCoordinates(v1,2)-mesh.Cell0DsCoordinates(v2,2))*(mesh.Cell0DsCoordinates(v1,2)-mesh.Cell0DsCoordinates(v2,2)));

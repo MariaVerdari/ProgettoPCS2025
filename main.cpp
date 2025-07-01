@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 		
 			
 			if (p == 3){
+				d = 1;
 				
 				switch(q) {
 					case 3: //tetraedro
@@ -53,10 +54,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 						}
 						break;
 													
-						
-						
-	
-	
+					
 	
 					case 4: //ottaedro
 						if (!Ottaedro(mesh))
@@ -66,9 +64,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 						}
 						break;
 
-						
-	
-					
+										
 
 					case 5: //icosaedro
 						if (!Icosaedro(mesh))
@@ -83,14 +79,19 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 					return 1;
 					
 				}
-			
-					// ALTRA TRIANGOLAZIONEEEE		
+							
+					if (!Triangolazione2(mesh, b)) //triangolazione 2
+											{
+												cerr << "Errore nella triangolazione"<< endl;
+												return 1;
+											}
+											
 
-				
+								
 				
 			
 			} else if (q ==3) // duale seconda classe
-			{
+			{	d = 2;
 				switch(p){
 					
 					case 4: //ottaedro
@@ -121,8 +122,12 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 				}
 				
 				
-				//altra tr
-							
+				if (!Triangolazione2(mesh, b)) //triangolazione 2
+														{
+															cerr << "Errore nella triangolazione"<< endl;
+															return 1;
+														}
+																		
 				if (!Duale(mesh)) //duale
 				{
 					cerr << "Errore nella dualizzazione"<< endl;
@@ -256,7 +261,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 	
 		
 	
-if (Cammino){cout<<"ok"<<endl;
+if (Cammino){
 			int v1;
 			int v2;
 			

@@ -1123,7 +1123,7 @@ for (unsigned int i = 0; i <b; i++){
 			if (i==0) 
 				mesh.Cell1DsVisibility.push_back(10); //con marker 10 saranno i lati da dividere (gialli)
 			else
-				mesh.Cell0DsVisibility.push_back(11); //con marker 11 saranno da usare per collagare baricentri facce adiacenti
+				mesh.Cell1DsVisibility.push_back(11); //con marker 11 saranno da usare per collagare baricentri facce adiacenti
 
     
         } else {
@@ -1146,7 +1146,7 @@ for (unsigned int i = 0; i <b; i++){
 			if (j==b-i-1)
 				mesh.Cell1DsVisibility.push_back(10);
 			else
-				mesh.Cell0DsVisibility.push_back(11);
+				mesh.Cell1DsVisibility.push_back(11);
 		} 
 		else {
             v2id=(*(result.first)).second;
@@ -1238,9 +1238,11 @@ for (unsigned int i = 0; i <b; i++){
     }
 }	
 	int idbari;
-	for (int faccia : faccetemp) {
+	
+	
+	map <int, int> bari; //mappa faccia temp-baricentro
+	for (int faccia : faccetemp){ // per creare baricentro
 		vector<int> verticifaccia1 = mesh.Cell2DsVertices[faccia];
-		vector<int> latifaccia1 = mesh.Cell2DsEdges[faccia];
         double nuovax = mesh.Cell0DsCoordinates(verticifaccia1[0],0)+mesh.Cell0DsCoordinates(verticifaccia1[1],0)+mesh.Cell0DsCoordinates(verticifaccia1[2],0);
         double nuovay = mesh.Cell0DsCoordinates(verticifaccia1[0],1)+mesh.Cell0DsCoordinates(verticifaccia1[1],1)+mesh.Cell0DsCoordinates(verticifaccia1[2],1);
         double nuovaz = mesh.Cell0DsCoordinates(verticifaccia1[0],2)+mesh.Cell0DsCoordinates(verticifaccia1[1],2)+mesh.Cell0DsCoordinates(verticifaccia1[2],2);
@@ -1257,6 +1259,18 @@ for (unsigned int i = 0; i <b; i++){
         mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
         for (unsigned int j=0;j<3;j++)
             mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=baricentro[j];
+		bari.insert({faccia, idbari});
+	}
+	
+	
+	
+	for (int faccia : faccetemp) { //ciclo su facce temp
+		vector<int> verticifaccia1 = mesh.Cell2DsVertices[faccia];
+		vector<int> latifaccia1 = mesh.Cell2DsEdges[faccia];
+
+		idbari = bari[faccia]; //baricentro
+		
+		
 		vector <int> e1;
 		int e1id;
 		vector <int> e2;
@@ -1267,9 +1281,13 @@ for (unsigned int i = 0; i <b; i++){
 		int e4id;
 		vector <int> e5;
 		int e5id;
+		
+		bool isOutside = false; // senza lati gialli la faccia è dentro
 		for (int l : latifaccia1) {
-			if (mesh.Cell1DsVisibility[l] == 10) {				//se il lato è giallo lo dividiamo e ne creiamo due nuovi
+			if (mesh.Cell1DsVisibility[l] == 10) {		//se il lato è giallo lo dividiamo e ne creiamo due nuovi
 				//creo il punto medio
+				isOutside = true; // senza lati gialli la faccia è dentro
+
 				int origin = mesh.Cell1DsExtrema(l,0);
 				int end = mesh.Cell1DsExtrema(l,1);
 				double xmedia = (mesh.Cell0DsCoordinates(origin,0)+mesh.Cell0DsCoordinates(end,0))/2.0;
@@ -1277,17 +1295,18 @@ for (unsigned int i = 0; i <b; i++){
 				double zmedia =	(mesh.Cell0DsCoordinates(origin,2)+mesh.Cell0DsCoordinates(end,2))/2.0;
 				double puntomedio[3] = {xmedia, ymedia, zmedia};
 				Normalizzazione(puntomedio);
+				int idpuntomedio = mesh.NumCell0Ds;
 				mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
 				verticitr2.insert(mesh.NumCell0Ds);
 				mesh.NumCell0Ds++;
 				mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
 				for (unsigned int j=0;j<3;j++)
-					mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=puntomedio[j];
+					mesh.Cell0DsCoordinates(idpuntomedio,j)=puntomedio[j];
 				mesh.Cell0DsVisibility.push_back(1);
 				
 				//creo i lati con quel punto
-				e1 = {mesh.NumCell0Ds-1,origin};
-				result = latiEsistenti2.insert({e1, mesh.NumCell1Ds});
+				e1 = {idpuntomedio,origin};
+				auto result = latiEsistenti2.insert({e1, mesh.NumCell1Ds});
 				if (result.second) {  //se non c'è già
 					mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
 					e1id = mesh.NumCell1Ds;
@@ -1301,7 +1320,7 @@ for (unsigned int i = 0; i <b; i++){
 					mesh.Cell1DsVisibility[e1id] = 1;
 				}
 				
-				e2 = {mesh.NumCell0Ds-1, end};
+				e2 = {idpuntomedio, end};
 				result = latiEsistenti2.insert({e2, mesh.NumCell1Ds});
 				if (result.second) {  //se non c'è già
 					mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -1331,7 +1350,7 @@ for (unsigned int i = 0; i <b; i++){
 					mesh.Cell1DsVisibility[e3id] = 1;
 				}
 				
-				e4 = {mesh.NumCell0Ds-1, idbari};
+				e4 = {idpuntomedio, idbari};
 				result = latiEsistenti2.insert({e4, mesh.NumCell1Ds});
 				if (result.second) {  //se non c'è già
 					mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -1367,7 +1386,7 @@ for (unsigned int i = 0; i <b; i++){
 				mesh.NumCell2Ds++;
 				mesh.Cell2DsNumVert.push_back(3);
 				mesh.Cell2DsNumEdg.push_back(3);
-				vector <int> abc_2 = {origin,puntomedio,baricentro};
+				vector <int> abc_2 = {origin,idpuntomedio,idbari};
 				mesh.Cell2DsVertices.push_back(abc_2);
 				vector <int> v123_2 = {e1id,e4id,e3id};
 				mesh.Cell2DsEdges.push_back(v123_2);
@@ -1378,7 +1397,7 @@ for (unsigned int i = 0; i <b; i++){
 				mesh.NumCell2Ds++;
 				mesh.Cell2DsNumVert.push_back(3);
 				mesh.Cell2DsNumEdg.push_back(3);
-				vector <int> abc_3 = {end,puntomedio,baricentro};
+				vector <int> abc_3 = {end,idpuntomedio,idbari};
 				mesh.Cell2DsVertices.push_back(abc_3);
 				vector <int> v123_3 = {e2id,e4id,e5id};
 				mesh.Cell2DsEdges.push_back(v123_3);
@@ -1392,6 +1411,48 @@ for (unsigned int i = 0; i <b; i++){
 	
 		
 		}
+		
+		
+		if (!isOutside){ // non ha lati gialli
+				vector <int> l1;
+				int l1id;
+				vector <int> l2;
+				int l2id;
+				vector <int> l3;
+				int l3id;
+		
+		for (int lato : latifaccia1){ //ciclo sui lati della faccia per faccia vicina
+        int facciavicina;
+        for (int fac : faccetemp){
+            if (find(mesh.Cell2DsEdges[fac].begin(), mesh.Cell2DsEdges[fac].end(), lato) !=mesh.Cell2DsEdges[fac].end()){
+                facciavicina = fac;
+				break;
+            }
+        }
+		
+		
+		if (idbari>mesh.Cell1DsExtrema(lato,0))
+            l1 = {idbari,mesh.Cell1DsExtrema(lato,0)};
+        else
+            l1 = {mesh.Cell1DsExtrema(lato,0),idbari};
+		
+		if (idbari>bari[facciavicina])
+            l2 = {idbari,bari[facciavicina]};   
+        else
+            l2 = {bari[facciavicina],idbari};
+		
+		//CHECK SE ESISTONO
+        
+		
+        
+	
+		
+		}
+		
+		
+		
+	}
+	}
 
 }// fine ciclo faccia
 mesh.Cell3DsFaces.push_back(faccetr2);
@@ -1421,10 +1482,8 @@ return true;
 
 
 
-//creo struttura roba gialla
-//ciclo sui lati gialli e li sostituisco con ogni su ametà aggiungendo i punti alla mesh.
-//
-//
+
+
 
 
 bool CamminoMinimo(const int v1, const int v2, vector<double>& dist,vector<int>& archi, vector<int>& pred, PolyhedronMesh& mesh){ // come Dijkstra ma si ferma a v2, pesi positivi, grafo non orientati

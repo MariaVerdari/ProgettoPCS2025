@@ -1069,7 +1069,7 @@ bool Triangolazione2(PolyhedronMesh& mesh, int b){
 			double nuovay = (i*coordpunti(0,1)+j*coordpunti(1,1)+k*coordpunti(2,1))/b;
 			double nuovaz = (i*coordpunti(0,2)+j*coordpunti(1,2)+k*coordpunti(2,2))/b;
 			double nuovopunto[3] = {nuovax, nuovay, nuovaz};
-			Normalizzazione(nuovopunto);
+			//Normalizzazione(nuovopunto);
         
         int a = Duplicato(mesh,nuovopunto);
         if (a == -1) {
@@ -1250,7 +1250,7 @@ for (unsigned int i = 0; i <b; i++){
         nuovay = nuovay/3.0;
         nuovaz = nuovaz/3.0;
         double baricentro[3]={nuovax, nuovay, nuovaz};
-       Normalizzazione (baricentro);
+       //Normalizzazione (baricentro);
 		idbari = mesh.NumCell0Ds;
 		mesh.Cell0DsId.push_back(idbari);
 		verticitr2.insert(idbari);
@@ -1294,15 +1294,28 @@ for (unsigned int i = 0; i <b; i++){
 				double ymedia = (mesh.Cell0DsCoordinates(origin,1)+mesh.Cell0DsCoordinates(end,1))/2.0;
 				double zmedia =	(mesh.Cell0DsCoordinates(origin,2)+mesh.Cell0DsCoordinates(end,2))/2.0;
 				double puntomedio[3] = {xmedia, ymedia, zmedia};
-				Normalizzazione(puntomedio);
-				int idpuntomedio = mesh.NumCell0Ds;
-				mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
-				verticitr2.insert(mesh.NumCell0Ds);
-				mesh.NumCell0Ds++;
-				mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
-				for (unsigned int j=0;j<3;j++)
-					mesh.Cell0DsCoordinates(idpuntomedio,j)=puntomedio[j];
-				mesh.Cell0DsVisibility.push_back(1);
+				//Normalizzazione(puntomedio);
+				int idpuntomedio;
+				int a = Duplicato(mesh,puntomedio);
+				if (a == -1) {
+					idpuntomedio = mesh.NumCell0Ds;        
+					mesh.Cell0DsId.push_back(idpuntomedio);
+					mesh.NumCell0Ds++;
+					mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
+					for (unsigned int j=0;j<3;j++)
+					   mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=puntomedio[j];
+					mesh.Cell0DsVisibility.push_back(1);
+				
+				}
+				else {
+					mesh.Cell0DsVisibility[a]=1;
+					idpuntomedio = a;        
+
+					
+				}
+				
+				verticitr2.insert(idpuntomedio); //se c'è gia amen
+
 				
 				//creo i lati con quel punto
 				e1 = {idpuntomedio,origin};
@@ -1429,8 +1442,10 @@ for (unsigned int i = 0; i <b; i++){
         int facciavicina;
         for (int fac : faccetemp){
             if (find(mesh.Cell2DsEdges[fac].begin(), mesh.Cell2DsEdges[fac].end(), lato) !=mesh.Cell2DsEdges[fac].end()){
+				if (fac != faccia){
                 facciavicina = fac;
 				break;
+				}
             }
         }
 		
@@ -1580,6 +1595,11 @@ vector <int> verticitriang;
 verticitriang.reserve(verticitr2.size());
 for (int n:verticitr2){
     verticitriang.push_back(n);
+	double punto[3] = {mesh.Cell0DsCoordinates(n,0),mesh.Cell0DsCoordinates(n,1),mesh.Cell0DsCoordinates(n,2)};
+	Normalizzazione(punto);
+	for (int j = 0; j<3;j++){
+		mesh.Cell0DsCoordinates(n,j) = punto[j];
+	}
 }
 mesh.Cell3DsVertices.push_back(verticitriang);
 mesh.Cell3DsNumVert.push_back(verticitriang.size());

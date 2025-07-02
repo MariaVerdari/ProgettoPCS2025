@@ -1420,6 +1420,10 @@ for (unsigned int i = 0; i <b; i++){
 				int l2id;
 				vector <int> l3;
 				int l3id;
+				vector <int> l4;
+				int l4id;
+				vector <int> l5;
+				int l5id;
 		
 		for (int lato : latifaccia1){ //ciclo sui lati della faccia per faccia vicina
         int facciavicina;
@@ -1441,8 +1445,116 @@ for (unsigned int i = 0; i <b; i++){
         else
             l2 = {bari[facciavicina],idbari};
 		
-		//CHECK SE ESISTONO
+		if (idbari>mesh.Cell1DsExtrema(lato,1))
+            l3 = {idbari,mesh.Cell1DsExtrema(lato,1)};
+        else
+            l3 = {mesh.Cell1DsExtrema(lato,1),idbari};
+		
+		if (mesh.Cell1DsExtrema(lato,0)>bari[facciavicina])
+            l4 = {mesh.Cell1DsExtrema(lato,0),bari[facciavicina]};   
+        else
+            l4 = {bari[facciavicina],mesh.Cell1DsExtrema(lato,0)};
+		
+		if (mesh.Cell1DsExtrema(lato,1)>bari[facciavicina])
+            l5 = {mesh.Cell1DsExtrema(lato,1), bari[facciavicina]};
+        else
+            l5 = {bari[facciavicina],mesh.Cell1DsExtrema(lato,1)};
+		
+		
+		
+		auto result = latiEsistenti2.insert({l1, mesh.NumCell1Ds});
+		if (result.second) {  //se non c'è già
+			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+			l1id = mesh.NumCell1Ds;
+			mesh.NumCell1Ds++;
+			mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=l1[0];
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=l1[1];
+			mesh.Cell1DsVisibility.push_back(1);
+		} else {
+			l1id=(*(result.first)).second;
+			assert (mesh.Cell1DsVisibility[l1id] == 1);
+		}
+		
+		result = latiEsistenti2.insert({l2, mesh.NumCell1Ds});
+		if (result.second) {  //se non c'è già
+			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+			l2id = mesh.NumCell1Ds;
+			mesh.NumCell1Ds++;
+			mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=l2[0];
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=l2[1];
+			mesh.Cell1DsVisibility.push_back(1);
+		} else {
+			l2id=(*(result.first)).second;
+			assert (mesh.Cell1DsVisibility[l2id] == 1);
+		}
+		
+		result = latiEsistenti2.insert({l3, mesh.NumCell1Ds});
+		if (result.second) {  //se non c'è già
+			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+			l3id = mesh.NumCell1Ds;
+			mesh.NumCell1Ds++;
+			mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=l3[0];
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=l3[1];
+			mesh.Cell1DsVisibility.push_back(1);
+		} else {
+			l3id=(*(result.first)).second;
+			assert (mesh.Cell1DsVisibility[l3id] == 1);
+		}
+		
+		result = latiEsistenti2.insert({l4, mesh.NumCell1Ds});
+		if (result.second) {  //se non c'è già
+			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+			l4id = mesh.NumCell1Ds;
+			mesh.NumCell1Ds++;
+			mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=l4[0];
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=l4[1];
+			mesh.Cell1DsVisibility.push_back(1);
+		} else {
+			l4id=(*(result.first)).second;
+			assert (mesh.Cell1DsVisibility[l4id] == 1);
+		}
+		
+		result = latiEsistenti2.insert({l5, mesh.NumCell1Ds});
+		if (result.second) {  //se non c'è già
+			mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
+			l5id = mesh.NumCell1Ds;
+			mesh.NumCell1Ds++;
+			mesh.Cell1DsExtrema.conservativeResize(mesh.NumCell1Ds,2);
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,0)=l5[0];
+			mesh.Cell1DsExtrema(mesh.NumCell1Ds-1,1)=l5[1];
+			mesh.Cell1DsVisibility.push_back(1);
+		} else {
+			l5id=(*(result.first)).second;
+			assert (mesh.Cell1DsVisibility[l5id] == 1);
+		}
         
+		
+				//facce
+				mesh.Cell2DsId.push_back(mesh.NumCell2Ds);   //faccia 1
+				faccetr2.push_back(mesh.NumCell2Ds);
+				mesh.NumCell2Ds++;
+				mesh.Cell2DsNumVert.push_back(3);
+				mesh.Cell2DsNumEdg.push_back(3);
+				vector <int> abc_4 = {idbari,mesh.Cell1DsExtrema(lato,0),bari[facciavicina]};
+				mesh.Cell2DsVertices.push_back(abc_4);
+				vector <int> v123_4 = {l1id,l4id,l2id};
+				mesh.Cell2DsEdges.push_back(v123_4);
+				mesh.Cell2DsVisibility.push_back(1);
+				
+				mesh.Cell2DsId.push_back(mesh.NumCell2Ds);   //faccia 2
+				faccetr2.push_back(mesh.NumCell2Ds);
+				mesh.NumCell2Ds++;
+				mesh.Cell2DsNumVert.push_back(3);
+				mesh.Cell2DsNumEdg.push_back(3);
+				vector <int> abc_5 = {idbari,bari[facciavicina],mesh.Cell1DsExtrema(lato,1)};
+				mesh.Cell2DsVertices.push_back(abc_5);
+				vector <int> v123_5 = {l2id,l5id,l3id};
+				mesh.Cell2DsEdges.push_back(v123_5);
+				mesh.Cell2DsVisibility.push_back(1);
 		
         
 	

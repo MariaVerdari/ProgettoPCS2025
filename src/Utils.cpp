@@ -1250,7 +1250,7 @@ for (unsigned int i = 0; i <b; i++){
         nuovay = nuovay/3.0;
         nuovaz = nuovaz/3.0;
         double baricentro[3]={nuovax, nuovay, nuovaz};
-        Normalizzazione (baricentro);
+       Normalizzazione (baricentro);
 		idbari = mesh.NumCell0Ds;
 		mesh.Cell0DsId.push_back(idbari);
 		verticitr2.insert(idbari);

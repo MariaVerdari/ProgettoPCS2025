@@ -162,8 +162,6 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 						break;
 													
 						
-						
-	
 	
 	
 					case 4: //ottaedro
@@ -172,9 +170,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 							cerr << "Errore nella formazione dell'ottaedro"<< endl;
 							return 1;
 						}
-						break;
-
-						
+						break;		
 	
 					
 
@@ -325,19 +321,7 @@ if (Cammino){
 		}
 
 	}
-
-
-
-		// assegno propirta
-		// stampo numero lati e somma lunghezze
-		//testo che dia 0 se è tra lui e se stesso
 		
-		
-	
-
-	 
-	
-			
 
 		} // fine cammino
 		
@@ -350,33 +334,6 @@ if (Cammino){
 		return(1);
 	}
 		
-
-	
-
-/*
-for (unsigned int i=0; i<mesh.NumCell0Ds; i++){
-	for (unsigned int j=0; j<3; j++) {
-		cout<< mesh.Cell0DsCoordinates(i,j)<<" ";
-	}
-	cout<<endl;
-}
-
-for (unsigned int i=0; i<mesh.NumCell1Ds; i++){
-	for (unsigned int j=0; j<2; j++) {
-		cout<< mesh.Cell1DsExtrema(i,j)<<" ";
-	}
-	cout<<endl;
-}
-
-for (auto& el : mesh.Cell2DsVertices){
-	for (auto n :el) {
-		cout<< n<<" ";
-	}
-	cout<<endl;
-}
-cout<<mesh.NumCell0Ds;
-*/
-
 
 
     Gedim::UCDUtilities utilities;

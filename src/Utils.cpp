@@ -608,7 +608,6 @@ for (unsigned int i = 0; i<=b; i++) {
         double nuovaz = (i*coordpunti(0,2)+j*coordpunti(1,2)+k*coordpunti(2,2))/b;
         double nuovopunto[3] = {nuovax, nuovay, nuovaz};
         Normalizzazione(nuovopunto);
-        //cout<<nuovopunto[0]*nuovopunto[0]+nuovopunto[1]*nuovopunto[1]+nuovopunto[2]*nuovopunto[2]<<endl;
         
         int a = Duplicato(mesh,nuovopunto);
         if (a == -1) {
@@ -616,8 +615,8 @@ for (unsigned int i = 0; i<=b; i++) {
             mesh.Cell0DsId.push_back(a);
             mesh.NumCell0Ds++;
             mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
-            for (unsigned int j=0;j<3;j++)
-               mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=nuovopunto[j];
+            for (unsigned int ii=0;ii<3;ii++)
+               mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,ii)=nuovopunto[ii];
             mesh.Cell0DsVisibility.push_back(1);
         
     }
@@ -1048,9 +1047,9 @@ bool Triangolazione2(PolyhedronMesh& mesh, int b){
 
 	vector<int> facce = mesh.Cell3DsFaces[0]; //facce di partenza
 	for (unsigned int numerofaccia=0; numerofaccia<mesh.Cell3DsNumFaces[0]; numerofaccia++) { // ciclo su ogni faccia
-		int faccia = facce[numerofaccia];
-		vector<int> latifaccia = mesh.Cell2DsEdges[faccia];
-		vector<int> verticifaccia= mesh.Cell2DsVertices[faccia];
+		int facciaex = facce[numerofaccia];
+		vector<int> latifaccia = mesh.Cell2DsEdges[facciaex];
+		vector<int> verticifaccia= mesh.Cell2DsVertices[facciaex];
 		MatrixXd coordpunti(3,3);
 		for (unsigned int punto = 0; punto<3; punto++) {
 			for (unsigned int coordinata = 0; coordinata < 3; coordinata++) {
@@ -1076,9 +1075,16 @@ bool Triangolazione2(PolyhedronMesh& mesh, int b){
             a = mesh.NumCell0Ds;        
             mesh.Cell0DsId.push_back(a);
             mesh.NumCell0Ds++;
+			// Example debug print
+cout << "Before resize: NumCell0Ds=" << mesh.NumCell0Ds << ", Coord rows=" << mesh.Cell0DsCoordinates.rows() << endl;
+// ... your code ...
+
             mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
-            for (unsigned int j=0;j<3;j++)
-               mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,j)=nuovopunto[j];
+cout << "After resize: NumCell0Ds=" << mesh.NumCell0Ds << ", Coord rows=" << mesh.Cell0DsCoordinates.rows() << endl;
+// ... your code ...
+cout << "Accessing row: " << mesh.NumCell0Ds-1 <<endl;
+            for (unsigned int ii=0;ii<3;ii++)
+               mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,ii)=nuovopunto[ii];
             mesh.Cell0DsVisibility.push_back(1);
         
 		}
@@ -1593,6 +1599,7 @@ mesh.Cell3DsEdges.push_back(latitr2);
 mesh.Cell3DsNumEdg.push_back(latitr2.size());
 vector <int> verticitriang;
 verticitriang.reserve(verticitr2.size());
+cout<<verticitr2.size()<<endl;
 for (int n:verticitr2){
     verticitriang.push_back(n);
 	double punto[3] = {mesh.Cell0DsCoordinates(n,0),mesh.Cell0DsCoordinates(n,1),mesh.Cell0DsCoordinates(n,2)};

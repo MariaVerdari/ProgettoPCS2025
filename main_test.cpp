@@ -6,19 +6,19 @@
 	bool q3 = false;
 	bool q4 = false;
 	bool q5 = false;
+	bool p4 = false;
+	bool p5 = false;
 	int b;
 	int c;
 	
 int main(int argc, char *argv[])
 {
-	
-	
-	if (argc ==5){ 
-	
+
+
+	if (argc == 5 || argc == 7){
 		int quadrupla[4];
-		for (unsigned int i = 0; i < argc-1; i++) { //mi assicuro che tutti gli interi siano validi
+		for (unsigned int i = 0; i < 4; i++) { //mi assicuro che tutti gli interi siano validi
 			istringstream convert(argv[i+1]);
-			string altro;
 			if (!(convert >> quadrupla[i])  || !(convert.eof())) { //no numeri con il punto
 				cerr << "Errore: l'argomento '" << argv[i + 1] << "' non è un intero valido"<<endl;
 				return 1;
@@ -28,7 +28,11 @@ int main(int argc, char *argv[])
 		int q = quadrupla[1];
 		b = quadrupla[2];
 		c = quadrupla[3];
-
+		
+		if (b== 0){
+			b = c;
+			c=0;
+		}
 		
 		
 		
@@ -44,8 +48,6 @@ int main(int argc, char *argv[])
 						break;
 													
 						
-						
-	
 	
 	
 					case 4: //ottaedro
@@ -108,10 +110,7 @@ int main(int argc, char *argv[])
 			
 		}
 		else if (b == 0 || c == 0) { // prima classe
-		if (b == 0){
-			b = c;
-			c = 0;
-		}
+		
 		
 			
 			if (p == 3){
@@ -141,15 +140,12 @@ int main(int argc, char *argv[])
 				switch(p){
 					
 					case 4: //ottaedro
-						
+						p4 = true;
 						break;
 					break;
 						
-	
-					
-
 					case 5: //icosaedro
-					
+						p5 = true;
 						break;
 					break;
 					
@@ -177,35 +173,12 @@ int main(int argc, char *argv[])
 		}
 
 	
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+	
 		
 	}
-	
-	else if (argc == 7){ // cammino medio
-	
-	
-	
-		int sestupla[6];
-		for (unsigned int i = 0; i < argc -1; i++) { //mi assicuro che tutti gli interi siano validi
-			istringstream convert(argv[i+1]);
-			if (!(convert >> sestupla[i])  || !(convert.eof())) { 
-				cerr << "Errore: l'argomento '" << argv[i + 1] << "' non è un intero valido"<<endl;
-				return 1;
-			}
-		}
-		int p = sestupla[0];
-		int q = sestupla[1];
-		int b = sestupla[2];
-		int c = sestupla[3];
-		int v1 = sestupla[4];
-		int v2 = sestupla[5];
-		
-		// bo 
-	
 
-	
-	
-	}
-	
 	else{
 		cerr << "Errore: l'input può essere una quadrupla oppure una sestupla di numeri interi"<<endl;
 		return(1);
@@ -213,8 +186,5 @@ int main(int argc, char *argv[])
 		
 	
 	
-	
-	
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+
 }

@@ -43,7 +43,7 @@ return a;
 }
 
 
-bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
+void Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
 
     vector <int> vertices;
     vector <int> edges;
@@ -70,10 +70,7 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
     double h2 = sqrt(1-dist*dist);
     double p4[3] = {a,b,h2};
     double baricentro[3] = {a, b, h2/4.0};
-    //double baricentro[3];
-    //for (unsigned int i =0; i<3;i++){
-    //baricentro[i]=(p1[i]+p2[i]+p3[i]+p4[i])/4.0;  }
-
+   
     
     p1[0] -= baricentro[0] ;
     p2[0] -= baricentro[0] ;
@@ -97,37 +94,6 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
     Normalizzazione(p4);
     
 
-    
-    
-
-/*
-        cout<<"1-2"<<((p2[0] - p1[0]) * (p2[0] - p1[0]) +
-        (p2[1] - p1[1]) * (p2[1] - p1[1]) +
-        (p2[2] - p1[2]) * (p2[2] - p1[2]))<<endl;
-        
-                cout<<"1-3"<<((p3[0] - p1[0]) * (p3[0] - p1[0]) +
-        (p3[1] - p1[1]) * (p3[1] - p1[1]) +
-        (p3[2] - p1[2]) * (p3[2] - p1[2]))<<endl;
-        
-                cout<<"1-4"<<((p4[0] - p1[0]) * (p4[0] - p1[0]) +
-        (p4[1] - p1[1]) * (p4[1] - p1[1]) +
-        (p4[2] - p1[2]) * (p4[2] - p1[2]))<<endl;
-        
-                cout<<"3-2"<<((p2[0] - p3[0]) * (p2[0] - p3[0]) +
-        (p2[1] - p3[1]) * (p2[1] - p3[1]) +
-        (p2[2] - p3[2]) * (p2[2] - p3[2]))<<endl;
-        
-                cout<<"4-2"<<((p2[0] - p4[0]) * (p2[0] - p4[0]) +
-        (p2[1] - p4[1]) * (p2[1] - p4[1]) +
-        (p2[2] - p4[2]) * (p2[2] - p4[2]))<<endl;
-        
-        
-                cout<<"4-2"<<((p3[0] - p4[0]) * (p3[0] - p4[0]) +
-        (p3[1] - p4[1]) * (p3[1] - p4[1]) +
-        (p3[2] - p4[2]) * (p3[2] - p4[2]))<<endl;
-        
-*/
-        
     
     
     
@@ -208,12 +174,11 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
     mesh.Cell3DsVisibility.push_back(0);
 	creaMappa ( mesh);
 
-    return true;
 }
 
 
 
-    bool Ottaedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
+    void Ottaedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
 
     vector <int> vertices;
     vector <int> edges;
@@ -221,14 +186,15 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
 
     // Celle 0Ds
     int exNumCell0Ds = mesh.NumCell0Ds;
-
     for (unsigned int i = 0; i < 6; i++) {
         mesh.Cell0DsId.push_back(mesh.NumCell0Ds);
         vertices.push_back(mesh.NumCell0Ds);
         mesh.Cell0DsVisibility.push_back(0); 
         mesh.NumCell0Ds++;
+
     }
     mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
+
     
     double p1[3]={1,0,0};
     double p2[3]={0,1,0};
@@ -347,7 +313,7 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
     mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
     mesh.NumCell3Ds +=1;
     mesh.Cell3DsNumFaces.push_back(8);
-    mesh.Cell3DsNumEdg.push_back(14);
+    mesh.Cell3DsNumEdg.push_back(12);
     mesh.Cell3DsNumVert.push_back(6);
     mesh.Cell3DsVertices.push_back(vertices);
     mesh.Cell3DsEdges.push_back(edges);
@@ -356,12 +322,11 @@ bool Tetraedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modific
     mesh.Cell3DsVisibility.push_back(0);
 	creaMappa ( mesh);
 
-    return true;
     }
 
 
 
-    bool Icosaedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
+    void Icosaedro(PolyhedronMesh& mesh){   // passaggio per riferimento per modificare la mesh
 
     vector <int> vertices;
     vector <int> edges;
@@ -447,27 +412,13 @@ B <<
   8,10,
   9,11;
 
-
- /* check lunghezze
-    for (unsigned int i=0;i<30;i++){
+for (unsigned int i=0;i<30;i++){
         for (unsigned int j=0;j<2;j++){
             mesh.Cell1DsExtrema(exNumCell1Ds+i,j)=B(i,j);
         }
-        int b1= B(i,0);
-        int b2 = B(i,1);
-        double q=mesh.Cell0DsCoordinates(b1,0);
-                double r=mesh.Cell0DsCoordinates(b2,0);
-        double s=mesh.Cell0DsCoordinates(b1,1);
-        double t=mesh.Cell0DsCoordinates(b2,1);
-        double u=mesh.Cell0DsCoordinates(b1,2);
-        double v=mesh.Cell0DsCoordinates(b2,2);
-
-        
-        cout<<i<<" "<<(q- r)*(q-r)+(s- t)*(s-t)+(u-v)*(u-v) <<endl  ;
-    
     }
-    
-    */
+
+
 
     // Celle 2Ds
     
@@ -552,7 +503,6 @@ Matrix<int,20,3>D; // facce in termini dei lati
         mesh.Cell2DsEdges.push_back(facciaedge);
     }
 
-    //CONTROLLARE
     // Celle 3Ds
     
     
@@ -568,12 +518,11 @@ Matrix<int,20,3>D; // facce in termini dei lati
     mesh.Cell3DsVisibility.push_back(0);
 	creaMappa ( mesh);
 
-    return true;
 }
     
     
     
-bool Triangolazione(PolyhedronMesh& mesh, int b){ 
+void Triangolazione(PolyhedronMesh& mesh, int b){ 
     set <int> verticitr;
     
 mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
@@ -590,11 +539,15 @@ int faccia = facce[numerofaccia];
 vector<int> latifaccia = mesh.Cell2DsEdges[faccia];
 vector<int> verticifaccia= mesh.Cell2DsVertices[faccia];
 MatrixXd coordpunti(3,3);
+
+
 for (unsigned int punto = 0; punto<3; punto++) {
     for (unsigned int coordinata = 0; coordinata < 3; coordinata++) {
         coordpunti(punto, coordinata) = mesh.Cell0DsCoordinates(verticifaccia[punto], coordinata);
         }
 }
+
+	
 vector<vector<int>> griglia;
 griglia.reserve(b+1);
 
@@ -617,19 +570,19 @@ for (unsigned int i = 0; i<=b; i++) {
             mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
             for (unsigned int ii=0;ii<3;ii++)
                mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,ii)=nuovopunto[ii];
-            mesh.Cell0DsVisibility.push_back(1);
-        
-    }
-    else {
-        mesh.Cell0DsVisibility[a]=1;
-    }
-    rigaGriglia.push_back(a);
-    verticitr.insert(a);
+			mesh.Cell0DsVisibility.push_back(1);
+	
+		}
+		else {
+			mesh.Cell0DsVisibility[a]=1;
+		}
+		rigaGriglia.push_back(a);
+		verticitr.insert(a);
     
-        }
-        griglia.push_back(rigaGriglia);
-        
-        
+	}
+	griglia.push_back(rigaGriglia);
+	
+	
 }// fine cilco dei vertici
 vector <int> v1;
 vector <int> v2;
@@ -789,18 +742,17 @@ creaMappa(mesh);
 
 
 
-return true;
-
-
 }
 
 
 
-bool Duale (PolyhedronMesh& mesh){
+void Duale (PolyhedronMesh& mesh){
 	vector<int> dualvert;
 	vector<int> dualedg;
 	vector<int> dualfaces;
     list <unsigned int> facce1 = mesh.Cell2DsMarker[1];
+	
+
 	
 	
     map <int,int> bari;
@@ -842,7 +794,7 @@ bool Duale (PolyhedronMesh& mesh){
         int p1 = bari [faccecondivise[0]];
         int p2 = bari [faccecondivise[1]];
 		if (faccecondivise.size() != 2) {
-		cerr << "più di due facce condivise" << endl;
+		cerr << "più di due facce condivise " <<faccecondivise.size() << endl;
 }
 
         mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -918,7 +870,6 @@ bool Duale (PolyhedronMesh& mesh){
 
 	creaMappa ( mesh);
 
-    return true;
 
 }
 
@@ -1033,9 +984,9 @@ bool Duale (PolyhedronMesh& mesh){
 
 
 
-bool Triangolazione2(PolyhedronMesh& mesh, int b){ 
+void Triangolazione2(PolyhedronMesh& mesh, int b){ 
     set <int> verticitr2;
-    
+
 	mesh.Cell3DsId.push_back(mesh.NumCell3Ds);
 	mesh.NumCell3Ds ++;
 
@@ -1046,16 +997,24 @@ bool Triangolazione2(PolyhedronMesh& mesh, int b){
 	vector <int> faccetr2;
 
 	vector<int> facce = mesh.Cell3DsFaces[0]; //facce di partenza
+	
 	for (unsigned int numerofaccia=0; numerofaccia<mesh.Cell3DsNumFaces[0]; numerofaccia++) { // ciclo su ogni faccia
+	
 		int facciaex = facce[numerofaccia];
 		vector<int> latifaccia = mesh.Cell2DsEdges[facciaex];
+		
 		vector<int> verticifaccia= mesh.Cell2DsVertices[facciaex];
+		
+		map<vector<int>, int> facceSet; //per le facce della seconda triangolazione
+
+
 		MatrixXd coordpunti(3,3);
 		for (unsigned int punto = 0; punto<3; punto++) {
-			for (unsigned int coordinata = 0; coordinata < 3; coordinata++) {
-				coordpunti(punto, coordinata) = mesh.Cell0DsCoordinates(verticifaccia[punto], coordinata);
-        }
-}
+				for (unsigned int coordinata = 0; coordinata < 3; coordinata++) {
+					coordpunti(punto, coordinata) = mesh.Cell0DsCoordinates(verticifaccia[punto], coordinata);
+			}
+		}
+		
 		vector<vector<int>> griglia;
 		griglia.reserve(b+1);
 
@@ -1070,35 +1029,30 @@ bool Triangolazione2(PolyhedronMesh& mesh, int b){
 			double nuovopunto[3] = {nuovax, nuovay, nuovaz};
 			//Normalizzazione(nuovopunto);
         
-        int a = Duplicato(mesh,nuovopunto);
-        if (a == -1) {
-            a = mesh.NumCell0Ds;        
-            mesh.Cell0DsId.push_back(a);
-            mesh.NumCell0Ds++;
-			// Example debug print
-cout << "Before resize: NumCell0Ds=" << mesh.NumCell0Ds << ", Coord rows=" << mesh.Cell0DsCoordinates.rows() << endl;
-// ... your code ...
-
-            mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
-cout << "After resize: NumCell0Ds=" << mesh.NumCell0Ds << ", Coord rows=" << mesh.Cell0DsCoordinates.rows() << endl;
-// ... your code ...
-cout << "Accessing row: " << mesh.NumCell0Ds-1 <<endl;
-            for (unsigned int ii=0;ii<3;ii++)
-               mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,ii)=nuovopunto[ii];
-            mesh.Cell0DsVisibility.push_back(1);
-        
-		}
-		else {
-			mesh.Cell0DsVisibility[a]=1;
-		}
-		rigaGriglia.push_back(a);
-		verticitr2.insert(a);
+			int a = Duplicato(mesh,nuovopunto);
+			if (a == -1) {
+				a = mesh.NumCell0Ds;        
+				mesh.Cell0DsId.push_back(a);
+				mesh.NumCell0Ds++;
+				mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
+				for (unsigned int ii=0;ii<3;ii++)
+				   mesh.Cell0DsCoordinates(mesh.NumCell0Ds-1,ii)=nuovopunto[ii];
+				mesh.Cell0DsVisibility.push_back(1);
+			
+			} else {
+				mesh.Cell0DsVisibility[a]=1;
+			}
+			rigaGriglia.push_back(a);
+			verticitr2.insert(a);
     
         }
         griglia.push_back(rigaGriglia);
         
         
 }// fine cilco dei vertici
+
+
+
 vector <int> v1;
 vector <int> v2;
 vector <int> v3;
@@ -1111,7 +1065,7 @@ for (unsigned int i = 0; i <b; i++){
         int p1 = griglia[i][j];
         int p2 = griglia[i][j+1];
         int p3 = griglia[i+1][j];
-        
+       ;
         if (p1>p2)
             v1 = {p1,p2};  // se i=0 sarà giallo
         else
@@ -1234,6 +1188,7 @@ for (unsigned int i = 0; i <b; i++){
         mesh.Cell2DsNumVert.push_back(3);
         mesh.Cell2DsNumEdg.push_back(3);
         vector <int> bdc = {p2,p4,p3};
+		
         mesh.Cell2DsVertices.push_back(bdc);
         vector <int> v452 = {v4id,v5id,v2id};
         mesh.Cell2DsEdges.push_back(v452);
@@ -1244,11 +1199,11 @@ for (unsigned int i = 0; i <b; i++){
     }
 }	
 	int idbari;
-	
-	
+
 	map <int, int> bari; //mappa faccia temp-baricentro
 	for (int faccia : faccetemp){ // per creare baricentro
 		vector<int> verticifaccia1 = mesh.Cell2DsVertices[faccia];
+
         double nuovax = mesh.Cell0DsCoordinates(verticifaccia1[0],0)+mesh.Cell0DsCoordinates(verticifaccia1[1],0)+mesh.Cell0DsCoordinates(verticifaccia1[2],0);
         double nuovay = mesh.Cell0DsCoordinates(verticifaccia1[0],1)+mesh.Cell0DsCoordinates(verticifaccia1[1],1)+mesh.Cell0DsCoordinates(verticifaccia1[2],1);
         double nuovaz = mesh.Cell0DsCoordinates(verticifaccia1[0],2)+mesh.Cell0DsCoordinates(verticifaccia1[1],2)+mesh.Cell0DsCoordinates(verticifaccia1[2],2);
@@ -1259,7 +1214,8 @@ for (unsigned int i = 0; i <b; i++){
        //Normalizzazione (baricentro);
 		idbari = mesh.NumCell0Ds;
 		mesh.Cell0DsId.push_back(idbari);
-		verticitr2.insert(idbari);
+		verticitr2.insert(idbari); 
+
         mesh.NumCell0Ds++;
         mesh.Cell0DsVisibility.push_back(1);
         mesh.Cell0DsCoordinates.conservativeResize(mesh.NumCell0Ds,3);
@@ -1296,6 +1252,7 @@ for (unsigned int i = 0; i <b; i++){
 
 				int origin = mesh.Cell1DsExtrema(l,0);
 				int end = mesh.Cell1DsExtrema(l,1);
+
 				double xmedia = (mesh.Cell0DsCoordinates(origin,0)+mesh.Cell0DsCoordinates(end,0))/2.0;
 				double ymedia = (mesh.Cell0DsCoordinates(origin,1)+mesh.Cell0DsCoordinates(end,1))/2.0;
 				double zmedia =	(mesh.Cell0DsCoordinates(origin,2)+mesh.Cell0DsCoordinates(end,2))/2.0;
@@ -1319,12 +1276,17 @@ for (unsigned int i = 0; i <b; i++){
 
 					
 				}
-				
 				verticitr2.insert(idpuntomedio); //se c'è gia amen
+				
 
 				
 				//creo i lati con quel punto
-				e1 = {idpuntomedio,origin};
+				
+				
+				if (idpuntomedio>origin)
+					e1 = {idpuntomedio,origin};
+				else
+					e1 = {origin,idpuntomedio};
 				auto result = latiEsistenti2.insert({e1, mesh.NumCell1Ds});
 				if (result.second) {  //se non c'è già
 					mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -1339,7 +1301,11 @@ for (unsigned int i = 0; i <b; i++){
 					mesh.Cell1DsVisibility[e1id] = 1;
 				}
 				
-				e2 = {idpuntomedio, end};
+				
+				if (idpuntomedio>end)
+					e2 = {idpuntomedio, end};
+				else
+					e2 = {end,idpuntomedio};
 				result = latiEsistenti2.insert({e2, mesh.NumCell1Ds});
 				if (result.second) {  //se non c'è già
 					mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -1354,7 +1320,11 @@ for (unsigned int i = 0; i <b; i++){
 					mesh.Cell1DsVisibility[e2id] = 1;
 				}
 				
-				e3 = {idbari, origin};
+				
+				if (idbari>origin)
+					e3 = {idbari, origin};
+				else
+					e3 = {origin,idbari};
 				result = latiEsistenti2.insert({e3, mesh.NumCell1Ds});
 				if (result.second) {  //se non c'è già
 					mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -1369,7 +1339,11 @@ for (unsigned int i = 0; i <b; i++){
 					mesh.Cell1DsVisibility[e3id] = 1;
 				}
 				
-				e4 = {idpuntomedio, idbari};
+				
+				if (idpuntomedio>idbari)
+					e4 = {idpuntomedio, idbari};
+				else
+					e4 = {idbari,idpuntomedio};
 				result = latiEsistenti2.insert({e4, mesh.NumCell1Ds});
 				if (result.second) {  //se non c'è già
 					mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -1384,7 +1358,11 @@ for (unsigned int i = 0; i <b; i++){
 					mesh.Cell1DsVisibility[e4id] = 1;
 				}
 				
-				e5 = {idbari, end};
+				
+				if (idbari>end)
+					e5 = {idbari, end};
+				else
+					e5 = {end,idbari};
 				result = latiEsistenti2.insert({e5, mesh.NumCell1Ds});
 				if (result.second) {  //se non c'è già
 					mesh.Cell1DsId.push_back(mesh.NumCell1Ds);
@@ -1421,6 +1399,7 @@ for (unsigned int i = 0; i <b; i++){
 				vector <int> v123_3 = {e2id,e4id,e5id};
 				mesh.Cell2DsEdges.push_back(v123_3);
 				mesh.Cell2DsVisibility.push_back(1);
+				
 				
 				
 				
@@ -1555,27 +1534,58 @@ for (unsigned int i = 0; i <b; i++){
         
 		
 				//facce
-				mesh.Cell2DsId.push_back(mesh.NumCell2Ds);   //faccia 1
-				faccetr2.push_back(mesh.NumCell2Ds);
-				mesh.NumCell2Ds++;
-				mesh.Cell2DsNumVert.push_back(3);
-				mesh.Cell2DsNumEdg.push_back(3);
-				vector <int> abc_4 = {idbari,mesh.Cell1DsExtrema(lato,0),bari[facciavicina]};
-				mesh.Cell2DsVertices.push_back(abc_4);
-				vector <int> v123_4 = {l1id,l4id,l2id};
-				mesh.Cell2DsEdges.push_back(v123_4);
-				mesh.Cell2DsVisibility.push_back(1);
 				
-				mesh.Cell2DsId.push_back(mesh.NumCell2Ds);   //faccia 2
-				faccetr2.push_back(mesh.NumCell2Ds);
-				mesh.NumCell2Ds++;
-				mesh.Cell2DsNumVert.push_back(3);
-				mesh.Cell2DsNumEdg.push_back(3);
+				
+				int f1;
+				vector <int> abc_4 = {idbari,mesh.Cell1DsExtrema(lato,0),bari[facciavicina]};
+				std::sort(abc_4.begin(), abc_4.end());  // crescente
+				auto resultf = facceSet.insert({abc_4,mesh.NumCell2Ds });
+				if (resultf.second) {  //se non c'è già
+					mesh.Cell2DsId.push_back(mesh.NumCell2Ds);   //faccia 1
+					f1 = mesh.NumCell2Ds;
+					faccetr2.push_back(mesh.NumCell2Ds);
+					mesh.NumCell2Ds++;
+					mesh.Cell2DsVisibility.push_back(1);
+					mesh.Cell2DsNumVert.push_back(3);
+					mesh.Cell2DsNumEdg.push_back(3);
+					mesh.Cell2DsVertices.push_back(abc_4);
+					vector <int> v123_4 = {l1id,l4id,l2id};
+					mesh.Cell2DsEdges.push_back(v123_4);
+				} else {
+					f1=(*(resultf.first)).second;
+					mesh.Cell2DsVisibility[f1] = 1;
+				}
+
+				
+				int f2;
 				vector <int> abc_5 = {idbari,bari[facciavicina],mesh.Cell1DsExtrema(lato,1)};
-				mesh.Cell2DsVertices.push_back(abc_5);
-				vector <int> v123_5 = {l2id,l5id,l3id};
-				mesh.Cell2DsEdges.push_back(v123_5);
-				mesh.Cell2DsVisibility.push_back(1);
+				std::sort(abc_5.begin(), abc_5.end());  // crescente
+				resultf = facceSet.insert({abc_5,mesh.NumCell2Ds });
+				if (resultf.second) {  //se non c'è già
+					mesh.Cell2DsId.push_back(mesh.NumCell2Ds);   //faccia 2
+					f2 = mesh.NumCell2Ds;
+					faccetr2.push_back(mesh.NumCell2Ds);
+					mesh.NumCell2Ds++;
+					mesh.Cell2DsVisibility.push_back(1);
+					mesh.Cell2DsNumVert.push_back(3);
+					mesh.Cell2DsNumEdg.push_back(3);
+					mesh.Cell2DsVertices.push_back(abc_5);
+					vector <int> v123_5 = {l2id,l5id,l3id};
+					mesh.Cell2DsEdges.push_back(v123_5);
+					
+				} else {
+					f2=(*(resultf.first)).second;
+					mesh.Cell2DsVisibility[f2] = 1;
+				}
+				
+				
+				
+				
+				
+				
+				
+				
+			
 		
         
 	
@@ -1599,9 +1609,9 @@ mesh.Cell3DsEdges.push_back(latitr2);
 mesh.Cell3DsNumEdg.push_back(latitr2.size());
 vector <int> verticitriang;
 verticitriang.reserve(verticitr2.size());
-cout<<verticitr2.size()<<endl;
 for (int n:verticitr2){
     verticitriang.push_back(n);
+	
 	double punto[3] = {mesh.Cell0DsCoordinates(n,0),mesh.Cell0DsCoordinates(n,1),mesh.Cell0DsCoordinates(n,2)};
 	Normalizzazione(punto);
 	for (int j = 0; j<3;j++){
@@ -1612,7 +1622,6 @@ mesh.Cell3DsVertices.push_back(verticitriang);
 mesh.Cell3DsNumVert.push_back(verticitriang.size());
 creaMappa ( mesh);
 
-return true;
 
 
 }

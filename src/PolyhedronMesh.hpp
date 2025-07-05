@@ -11,10 +11,10 @@ namespace PolyhedronLibrary {
 
 struct PolyhedronMesh 
 {
-	unsigned int NumCell0Ds;
-	unsigned int NumCell1Ds;
-	unsigned int NumCell2Ds;
-	unsigned int NumCell3Ds;
+	unsigned int NumCell0Ds = 0;
+	unsigned int NumCell1Ds = 0;
+	unsigned int NumCell2Ds = 0;
+	unsigned int NumCell3Ds = 0;
 
 	
 	
@@ -59,7 +59,6 @@ struct PolyhedronMesh
 	map<int,list<unsigned int>> Cell3DsMarker;
 
 	vector<int> Cell3DsVisibility;
-
 };
 
 }

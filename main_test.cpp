@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
 					
 				}
 			
-					// ALTRA TRIANGOLAZIONEEEE		
 
 				
 				
@@ -95,9 +94,7 @@ int main(int argc, char *argv[])
 					
 				}
 				
-				
-				//altra tr
-							
+											
 				
 							
 			} else { //nessuno dei due casi

@@ -37,41 +37,32 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 			Cammino = true;
 
 			
-
+	
 		
 		if (b==c){ // seconda classe
-		
 			
 			if (p == 3){
 				d = 1;
 				
 				switch(q) {
 					case 3: //tetraedro
-						if (!Tetraedro(mesh))
-						{
-							cerr << "Errore nella formazione del tetraedro"<< endl;
-							return 1;
-						}
+						Tetraedro(mesh);
+						
+						
 						break;
 													
 					
 	
 					case 4: //ottaedro
-						if (!Ottaedro(mesh))
-						{
-							cerr << "Errore nella formazione dell'ottaedro"<< endl;
-							return 1;
-						}
+						Ottaedro(mesh);
+						
 						break;
 
 										
 
 					case 5: //icosaedro
-						if (!Icosaedro(mesh))
-						{
-							cerr << "Errore nella formazione dell'icosaedro"<< endl;
-							return 1;
-						}
+						Icosaedro(mesh);
+						
 						break;
 					
 					default:
@@ -80,12 +71,8 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 					
 				}
 							
-					if (!Triangolazione2(mesh, b)) //triangolazione 2
-											{
-												cerr << "Errore nella triangolazione"<< endl;
-												return 1;
-											}
-											
+					Triangolazione2(mesh, b);//triangolazione 2
+										
 
 								
 				
@@ -95,12 +82,7 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 				switch(p){
 					
 					case 4: //ottaedro
-					if (!Ottaedro(mesh))
-						{
-							cerr << "Errore nella formazione dell'icosaedro"<< endl;
-							return 1;
-						}
-					
+					Ottaedro(mesh);					
 
 					break;
 						
@@ -108,11 +90,8 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 					
 
 					case 5: //icosaedro
-					if (!Icosaedro(mesh))
-						{
-							cerr << "Errore nella formazione dell'icosaedro"<< endl;
-							return 1;
-						}
+					Icosaedro(mesh);
+					
 					break;
 					
 					default:
@@ -122,17 +101,10 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 				}
 				
 				
-				if (!Triangolazione2(mesh, b)) //triangolazione 2
-														{
-															cerr << "Errore nella triangolazione"<< endl;
-															return 1;
-														}
-																		
-				if (!Duale(mesh)) //duale
-				{
-					cerr << "Errore nella dualizzazione"<< endl;
-					return 1;
-				}
+				Triangolazione2(mesh, b); //triangolazione 2
+																
+				Duale(mesh); //duale
+				
 							
 			} else { //nessuno dei due casi
 			cerr << "Errore: nessuno degli argomenti p e q è pari a 3"<<endl;
@@ -154,32 +126,24 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 				
 				switch(q) {
 					case 3: //tetraedro
-						if (!Tetraedro(mesh))
-						{
-							cerr << "Errore nella formazione del tetraedro"<< endl;
-							return 1;
-						}
+						Tetraedro(mesh);
+
 						break;
 													
 						
 	
 	
 					case 4: //ottaedro
-						if (!Ottaedro(mesh))
-						{
-							cerr << "Errore nella formazione dell'ottaedro"<< endl;
-							return 1;
-						}
+						Ottaedro(mesh);
+					
+						
 						break;		
 	
 					
 
 					case 5: //icosaedro
-						if (!Icosaedro(mesh))
-						{
-							cerr << "Errore nella formazione dell'icosaedro"<< endl;
-							return 1;
-						}
+						Icosaedro(mesh);
+					
 						break;
 					
 					default:
@@ -187,14 +151,8 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 					return 1;
 					
 				}
-				if (!Triangolazione(mesh, b)) //triangolazione
-							{
-								cerr << "Errore nella triangolazione"<< endl;
-								return 1;
-							}
-							
-
-				
+				Triangolazione(mesh, b); //triangolazione
+		
 				
 			
 			} else if (q ==3) // duale
@@ -202,24 +160,16 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 				switch(p){
 					
 					case 4: //ottaedro
-						if (!Ottaedro(mesh))
-						{
-							cerr << "Errore nella formazione dell'ottaedro"<< endl;
-							return 1;
-						}
-						break;
+						Ottaedro(mesh);
+					
 					break;
 						
 	
 					
 
 					case 5: //icosaedro
-						if (!Icosaedro(mesh))
-						{
-							cerr << "Errore nella formazione dell'ottaedro"<< endl;
-							return 1;
-						}
-						break;
+						Icosaedro(mesh);
+						
 					break;
 					
 					default:
@@ -228,16 +178,10 @@ int main(int argc, char *argv[]) //argc è numero di elementi passati incluso il
 					
 				}
 				
-				if (!Triangolazione(mesh, b)) //triangolazione
-							{
-								cerr << "Errore nella triangolazione"<< endl;
-								return 1;
-							}
-				if (!Duale(mesh)) //duale
-				{
-					cerr << "Errore nella dualizzazione"<< endl;
-					return 1;
-				}
+				Triangolazione(mesh, b); //triangolazione
+					
+				Duale(mesh); //duale
+			
 				
 			} else { //nessuno dei due casi
 			cerr << "Errore: nessuno degli argomenti p e q è pari a 3"<<endl;
@@ -289,7 +233,7 @@ if (Cammino){
 		vector<int> archi;
 		vector<double> dist;
 		vector<int> pred;
-		CreaMAMP(mesh, d); // chiamo funzione per fare lista adiacenza e matrice pesi 
+		CreaMAMP(mesh, d); // chiamo funzione per fare mappa adiacenza e matrice pesi 
 		if (!CamminoMinimo(v1,  v2,  dist, archi, pred, mesh)){
 			cerr << "Errore: cammino minimo non trovato"<<endl;
 			return 1;

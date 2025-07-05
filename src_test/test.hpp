@@ -18,7 +18,6 @@ extern int c;
 
 
 namespace PolyhedronLibrary {
-	bool a;
 	PolyhedronMesh mesh;
 
 
@@ -31,8 +30,8 @@ TEST(TestVertices, Vertices3)
 	int T = b*b +b*c+ c*c;
 	int expV = 2*T +2;
 	
-	a =Tetraedro(mesh);
-	a =Triangolazione(mesh, b);
+	Tetraedro(mesh);
+	Triangolazione(mesh, b);
 
     EXPECT_EQ(mesh.Cell0DsMarker[1].size(), expV); //input output
 }
@@ -101,8 +100,8 @@ TEST(TestVertices, Vertices4)
 	int T = b*b +b*c+ c*c;
 	int expV = 4*T +2;
 	
-	 a =Ottaedro(mesh4);
-	 a =Triangolazione(mesh4, b);
+	 Ottaedro(mesh4);
+	 Triangolazione(mesh4, b);
 
     EXPECT_EQ(mesh4.Cell0DsMarker[1].size(), expV); //input output
 }
@@ -170,8 +169,8 @@ TEST(TestVertices, Vertices5)
 	int T = b*b +b*c+ c*c;
 	int expV = 10*T +2;
 	
-	 a =Icosaedro(mesh5);
-	 a =Triangolazione(mesh5, b);
+	 Icosaedro(mesh5);
+	 Triangolazione(mesh5, b);
 
     EXPECT_EQ(mesh5.Cell0DsMarker[1].size(), expV); //input output
 }
@@ -242,9 +241,9 @@ TEST(TestVertices, Vertices4d)
 	int T = b*b +b*c+ c*c;
 	int expV = 4*T +2;
 	
-	 a =Ottaedro(mesh6);
-	 a =Triangolazione(mesh6, b);
-	 a = Duale(mesh6);
+	 Ottaedro(mesh6);
+	 Triangolazione(mesh6, b);
+	 Duale(mesh6);
 
 
     EXPECT_EQ(mesh6.Cell2DsMarker[2].size(), expV); //facce come punti del primale
@@ -309,9 +308,9 @@ TEST(TestVertices, Vertices5d)
 	int T = b*b +b*c+ c*c;
 	int expV = 10*T +2;
 	
-	 a =Icosaedro(mesh7);
-	 a =Triangolazione(mesh7, b);
-	 a = Duale(mesh7);
+	 Icosaedro(mesh7);
+	 Triangolazione(mesh7, b);
+	 Duale(mesh7);
 
     EXPECT_EQ(mesh7.Cell2DsMarker[2].size(), expV); //facce come punti del primale
 }
